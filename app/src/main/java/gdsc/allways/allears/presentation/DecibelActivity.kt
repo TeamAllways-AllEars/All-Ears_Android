@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
+import org.tensorflow.lite.support.audio.TensorAudio
 
 class DecibelActivity : ComponentActivity() {
 
@@ -30,21 +31,22 @@ class DecibelActivity : ComponentActivity() {
     private lateinit var binding: ActivityDecibelBinding
 
     private val requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // TODO 녹음 실행
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // TODO 녹음 실행
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this, Manifest.permission.RECORD_AUDIO
+                )
+            ) {
+                showRequestPermissionRationale()
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        this, Manifest.permission.RECORD_AUDIO
-                    )) {
-                    showRequestPermissionRationale()
-                } else {
-                    // 설정 창에서 사용자가 직접 권한 변경하도록 함
-                    showPermissionSettingDialog()
-                }
+                // 설정 창에서 사용자가 직접 권한 변경하도록 함
+                showPermissionSettingDialog()
             }
         }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
