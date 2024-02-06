@@ -80,8 +80,9 @@ dependencies {
     // Import tflite dependencies
     implementation 'org.tensorflow:tensorflow-lite:2.4.0'
     // The GPU delegate library is optional. Depend on it as needed.
-    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'
+    //implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'    // 추가 시 에러 남. 원인 파악 필요.
     implementation 'org.tensorflow:tensorflow-lite-support:0.2.0'
+    // -------------
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'

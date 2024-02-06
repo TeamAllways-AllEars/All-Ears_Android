@@ -10,31 +10,43 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
-import org.tensorflow.lite.support.audio.TensorAudio
+import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
+import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
+import java.io.IOException
 
 class DecibelActivity : ComponentActivity() {
 
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
+        private const val LOG_TAG = "AudioRecordTest"
+    }
+
+    // 상태 관리
+        // 릴리즈 -> 녹음중 -> 릴리즈 -> ...
+    private enum class State {
+        RELEASE, RECORDING
     }
 
     private lateinit var binding: ActivityDecibelBinding
+    private var recorder: MediaRecorder? = null
+    private var fileName: String = ""
+    private var state: State = RELEASE
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // TODO 녹음 실행
+            // 녹음 실행
+            onRecord(true)
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this, Manifest.permission.RECORD_AUDIO
@@ -53,36 +65,55 @@ class DecibelActivity : ComponentActivity() {
         binding = ActivityDecibelBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Record to the external cache directory for visibility
+        fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
+
         binding.recordImageButton.setOnClickListener {
-            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+            when (state) {
+                RELEASE -> {
+                    // 권한 확인 후 녹음 실행
+                    requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
-            /*
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    // TODO 녹음 실행
-                    // TODO You can use the API that requires the permission.
+                    // TODO 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용 필요?
                 }
+                RECORDING -> {
+                    // 녹음 중지
+                    onRecord(false)
 
-                ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.RECORD_AUDIO
-                ) -> {
-                    showRequestPermissionRationale()
-                }
-
-                else -> {
-                    ActivityCompat.requestPermissions(
-                        this,
-                        arrayOf(Manifest.permission.RECORD_AUDIO),
-                        REQUEST_RECORD_AUDIO_CODE
-                    )
+                    // TODO '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
                 }
             }
-
-             */
         }
+    }
+
+    private fun onRecord(start: Boolean) = if (start) startRecording() else stopRecording()
+
+    private fun stopRecording() {
+        recorder?.apply {
+            stop()
+            release()
+        }
+        recorder = null
+        state = RELEASE
+    }
+
+    private fun startRecording() {
+        recorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setOutputFile(fileName)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+
+            try {
+                prepare()
+            } catch (e: IOException) {
+                Log.e(LOG_TAG, "prepare() failed: $e")
+            }
+
+            start()
+        }
+
+        state = RECORDING
     }
 
     private fun showRequestPermissionRationale() {
@@ -119,41 +150,11 @@ class DecibelActivity : ComponentActivity() {
         }
         startActivity(intent)
     }
-
-    /*
-    // TODO onRequestPermissionsResult() 의 deprecation 으로 인한 에러 해결 필요
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_RECORD_AUDIO_CODE -> {
-                // 만약 request 가 거부되었다면, grantResults 는 empty 상태일 것이다.
-                if ((grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                ) {
-                    // TODO 녹음 실행
-                } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(
-                            this, Manifest.permission.RECORD_AUDIO
-                        )) {
-                        showRequestPermissionRationale()
-                    } else {
-                        // 설정 창에서 사용자가 직접 권한 변경하도록 함
-                        showPermissionSettingDialog()
-                    }
-                }
-                return
-            }
-            else -> return
-        }
-    }
-
-     */
 }
 
-/*
+/* New Project 생성시 기본 템플릿에 있었던 코드
+// Wear OS 특성상 필요한 코드인지 아직 안 알아본 상태라 남겨 둠.
+
 @Composable
 fun WearApp(greetingName: String) {
     AllEarsTheme {
