@@ -20,7 +20,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
+        <gdsc.allways.allears.presentation.WaveformView
             android:id="@+id/decibelView"
             android:layout_width="match_parent"
             android:layout_height="40dp"

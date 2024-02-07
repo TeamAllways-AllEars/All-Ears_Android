@@ -18,12 +18,14 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
 import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
 import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
 import java.io.IOException
 
-class DecibelActivity : ComponentActivity() {
+class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
@@ -37,6 +39,7 @@ class DecibelActivity : ComponentActivity() {
     }
 
     private lateinit var binding: ActivityDecibelBinding
+    private lateinit var timer: Timer
     private var recorder: MediaRecorder? = null
     private var fileName: String = ""
     private var state: State = RELEASE
@@ -68,6 +71,8 @@ class DecibelActivity : ComponentActivity() {
         // Record to the external cache directory for visibility
         fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
 
+        timer = Timer(this)
+
         binding.recordImageButton.setOnClickListener {
             when (state) {
                 RELEASE -> {
@@ -75,12 +80,22 @@ class DecibelActivity : ComponentActivity() {
                     requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
                     // TODO 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용 필요?
+                    binding.recordImageButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            this, R.drawable.baseline_pause_circle_filled_24
+                        )
+                    )
                 }
                 RECORDING -> {
                     // 녹음 중지
                     onRecord(false)
 
-                    // TODO '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
+                    // '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
+                    binding.recordImageButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            this, R.drawable.circle_record
+                        )
+                    )
                 }
             }
         }
@@ -94,6 +109,10 @@ class DecibelActivity : ComponentActivity() {
             release()
         }
         recorder = null
+
+        timer.stop()
+        binding.decibelView.invalidate()
+
         state = RELEASE
     }
 
@@ -112,6 +131,8 @@ class DecibelActivity : ComponentActivity() {
 
             start()
         }
+
+        timer.start()
 
         state = RECORDING
     }
@@ -149,6 +170,10 @@ class DecibelActivity : ComponentActivity() {
             data = Uri.fromParts("package", packageName, null)
         }
         startActivity(intent)
+    }
+
+    override fun onTick(duration: Long) {
+        binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
     }
 }
 
