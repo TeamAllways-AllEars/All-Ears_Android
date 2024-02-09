@@ -111,7 +111,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         recorder = null
 
         timer.stop()
-        binding.decibelView.invalidate()
 
         state = RELEASE
     }
@@ -131,6 +130,8 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
             start()
         }
+
+        binding.decibelView. clearDecibel()
 
         timer.start()
 

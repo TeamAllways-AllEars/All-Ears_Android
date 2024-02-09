@@ -14,7 +14,9 @@ class WaveformView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ): View(context, attrs, defStyleAttr) {
 
-    val rectF = RectF(20f, 30f, 20f+30f, 30f+60f)
+    private val ampList = mutableListOf<Float>()
+    private val rectFList = mutableListOf<RectF>()
+
     val redPaint = Paint().apply {
         color = Color.RED
     }
@@ -22,15 +24,37 @@ class WaveformView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        canvas?.drawRect(rectF, redPaint)
+        for (rectF in rectFList) {
+            canvas?.drawRect(rectF, redPaint)
+        }
     }
 
     fun addAmplitude(maxAmplitude: Float) {
-        rectF.left = 0f
-        rectF.right = maxAmplitude * 0.045f
-        rectF.top = 50f
-        rectF.bottom = rectF.top + 60f
+
+        ampList.add(maxAmplitude)
+        rectFList.clear()
+
+        val rectFWidth = 3f
+        val rectFMaxCount = (this.width / rectFWidth).toInt()
+
+        val amps = ampList.takeLast(rectFMaxCount)
+
+        for ((i, amp) in amps.withIndex()) {
+            val rectF = RectF()
+            rectF.top = 0f
+            rectF.bottom = (amp * 0.018).toFloat()
+            rectF.left = i * rectFWidth
+            rectF.right = rectF.left + rectFWidth
+
+            rectFList.add(rectF)
+        }
 
         invalidate()    // UI 초기화
+    }
+
+    fun clearDecibel() {
+        rectFList.clear()
+        ampList.clear()
+        invalidate()
     }
 }
