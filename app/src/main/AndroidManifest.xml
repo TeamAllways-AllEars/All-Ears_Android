@@ -58,11 +58,31 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.DeviceDefault">
+        </activity>
+
+        <activity
+            android:name=".presentation.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".presentation.SettingActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+
+        <activity
+            android:name=".presentation.SubtitlesActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat">
         </activity>
     </application>
 
