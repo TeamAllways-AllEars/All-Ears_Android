@@ -20,20 +20,162 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <gdsc.allways.allears.presentation.WaveformView
-            android:id="@+id/decibelView"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"
+<!--        <gdsc.allways.allears.presentation.WaveformView-->
+<!--            android:id="@+id/decibelView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="40dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/recordImageButton"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:layout_marginBottom="8dp"/>-->
+
+        <LinearLayout
+            android:id="@+id/imageContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/recordImageButton"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- 각 이미지뷰에 대한 설정 -->
+<!--            android:src에서 circle_record_ing를 decibel_unit로 바꿔야 함-->
+<!--            브랜치 전환을 위해 임시로 해둔 것임-->
+            <ImageView
+                android:id="@+id/image1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+            <Space
+                android:layout_width="2dp"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/image10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/circle_record_ing"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/liveTranscribeTextView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/decibelView"
+            app:layout_constraintTop_toBottomOf="@id/imageContainer"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳"
             android:textSize="14sp" />
