@@ -15,10 +15,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.animation.AnimationUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
 import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
@@ -79,23 +79,26 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     // 권한 확인 후 녹음 실행
                     requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
-                    // TODO 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용 필요?
-                    binding.recordImageButton.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            this, R.drawable.baseline_pause_circle_filled_24
-                        )
-                    )
+                    // 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용
+//                    binding.recordImageButton.setImageDrawable(
+//                        ContextCompat.getDrawable(
+//                            this, R.drawable.baseline_pause_circle_filled_24
+//                        )
+//                    )
+                    val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
+                    binding.recordImageButton.startAnimation(blinkAnimation)
                 }
                 RECORDING -> {
                     // 녹음 중지
                     onRecord(false)
 
                     // '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
-                    binding.recordImageButton.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            this, R.drawable.circle_record
-                        )
-                    )
+//                    binding.recordImageButton.setImageDrawable(
+//                        ContextCompat.getDrawable(
+//                            this, R.drawable.circle_record
+//                        )
+//                    )
+                    binding.recordImageButton.clearAnimation()
                 }
             }
         }
@@ -131,7 +134,8 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
             start()
         }
 
-        binding.decibelView. clearDecibel()
+        // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
+        //binding.decibelView.clearDecibel()
 
         timer.start()
 
@@ -173,8 +177,9 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         startActivity(intent)
     }
 
+    // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
     override fun onTick(duration: Long) {
-        binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
+        //binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
     }
 }
 

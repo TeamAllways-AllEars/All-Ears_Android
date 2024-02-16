@@ -32,7 +32,7 @@
 
         <!-- 칸 형태의 데시벨 뷰 -->
         <LinearLayout
-            android:id="@+id/imageContainer"
+            android:id="@+id/decibelContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -175,7 +175,7 @@
             android:id="@+id/liveTranscribeTextView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/imageContainer"
+            app:layout_constraintTop_toBottomOf="@id/decibelContainer"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳입니다. 실시간 "
             android:text="실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳입니다. 실시간 "
