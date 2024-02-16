@@ -178,6 +178,7 @@
             app:layout_constraintTop_toBottomOf="@id/imageContainer"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳입니다. 실시간 "
+            android:text="실시간 자막이 보일 곳입니다. 실시간 자막이 보일 곳입니다. 실시간 "
             android:textSize="14sp" />
     </android.support.constraint.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>
