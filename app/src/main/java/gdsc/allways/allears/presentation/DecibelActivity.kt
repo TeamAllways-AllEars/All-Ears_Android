@@ -213,7 +213,7 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     results?.get(0) ?: ""
                 }
             // Do something with spokenText.
-            binding.lastRecognizeResult.text = spokenText
+            binding.liveTranscribeTextView.text = spokenText
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
