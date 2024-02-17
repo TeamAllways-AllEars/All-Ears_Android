@@ -7,6 +7,7 @@
 package gdsc.allways.allears.presentation
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,8 +15,14 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
 import android.util.Log
 import android.view.animation.AnimationUtils
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -27,9 +34,13 @@ import java.io.IOException
 
 class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
+    var textView: TextView? = null
+
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
         private const val LOG_TAG = "AudioRecordTest"
+        private val PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.WAKE_LOCK)
+        private const val SPEECH_REQUEST_CODE = 0
     }
 
     // 상태 관리
@@ -132,6 +143,8 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
             }
 
             start()
+
+            displaySpeechRecognizer()
         }
 
         // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
@@ -180,6 +193,29 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
     override fun onTick(duration: Long) {
         //binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
+    }
+
+    // Create an intent that can start the Speech Recognizer activity
+    private fun displaySpeechRecognizer() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        }
+        // This starts the activity and populates the intent with the speech text.
+        startActivityForResult(intent, SPEECH_REQUEST_CODE)
+    }
+
+    // This callback is invoked when the Speech Recognizer returns.
+    // This is where you process the intent and extract the speech text from the intent.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val spokenText: String? =
+                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).let { results ->
+                    results?.get(0) ?: ""
+                }
+            // Do something with spokenText.
+            binding.lastRecognizeResult.text = spokenText
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
 
