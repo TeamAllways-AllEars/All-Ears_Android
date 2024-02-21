@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:context="gdsc.allways.allears.presentation.DecibelActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,36 +22,36 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 파동 형태의 데시벨 뷰 -->
-<!--        <gdsc.allways.allears.presentation.WaveformView-->
-<!--            android:id="@+id/decibelView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="40dp"-->
-<!--            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/recordImageButton"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginBottom="8dp"/>-->
+        <!--        <gdsc.allways.allears.presentation.WaveformView-->
+        <!--            android:id="@+id/decibelView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="40dp"-->
+        <!--            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/recordImageButton"-->
+        <!--            android:layout_marginTop="8dp"-->
+        <!--            android:layout_marginBottom="8dp"/>-->
 
         <!-- 칸 형태의 데시벨 뷰 -->
         <LinearLayout
             android:id="@+id/decibelContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/recordImageButton"
-            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recordImageButton">
 
             <ImageView
                 android:id="@+id/image1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -61,9 +62,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -74,9 +75,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -87,9 +88,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -100,9 +101,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -113,9 +114,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -126,9 +127,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -139,9 +140,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -152,9 +153,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
             <Space
                 android:layout_width="2dp"
@@ -165,9 +166,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/decibel_unit"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/decibel_unit" />
 
         </LinearLayout>
 
@@ -175,9 +176,12 @@
             android:id="@+id/liveTranscribeTextView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/decibelContainer"
+            android:gravity="center_horizontal"
+            android:text="@string/start_talking"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:textSize="14sp"
-            tools:text="STT의 결과가 이곳에 나타날 예정입니다. STT의 결과가 이곳에 나타날 예정입니다."/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/decibelContainer" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>

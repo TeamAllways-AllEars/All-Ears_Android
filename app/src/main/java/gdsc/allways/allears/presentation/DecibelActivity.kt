@@ -7,7 +7,6 @@
 package gdsc.allways.allears.presentation
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
@@ -15,32 +14,29 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
+import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
+import gdsc.allways.allears.presentation.D.SpeechAPI
+import gdsc.allways.allears.presentation.D.VoiceRecorder
 import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
 import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
-import java.io.IOException
+
+//private const val TAG_DECIBEL = "MediaRecordTest"
+private const val TAG_STT = "SpeechToTextTest"
 
 class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
-    var textView: TextView? = null
-
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
-        private const val LOG_TAG = "AudioRecordTest"
-        private val PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.WAKE_LOCK)
-        private const val SPEECH_REQUEST_CODE = 0
+//        private const val REQUEST_SPEECH_CODE = 0
+//        private val PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.WAKE_LOCK)
     }
 
     // 상태 관리
@@ -51,9 +47,43 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
     private lateinit var binding: ActivityDecibelBinding
     private lateinit var timer: Timer
-    private var recorder: MediaRecorder? = null
+//    private var recorder: MediaRecorder? = null
     private var fileName: String = ""
     private var state: State = RELEASE
+
+    private var speechAPI: SpeechAPI? = null
+    private var voiceRecorder: VoiceRecorder? = null
+    private val callback: VoiceRecorder.Callback = object : VoiceRecorder.Callback() {
+        override fun onVoiceStart() {
+            speechAPI?.startRecognizing(voiceRecorder!!.sampleRate)
+        }
+
+        override fun onVoice(data: ByteArray, size: Int) {
+            speechAPI?.recognize(data, size)
+        }
+
+        override fun onVoiceEnd() {
+            speechAPI?.finishRecognizing()
+        }
+    }
+
+    private val listener: SpeechAPI.Listener =
+        SpeechAPI.Listener { text, isFinal ->
+            if (isFinal) {
+                voiceRecorder!!.dismiss()
+            }
+            if (binding.liveTranscribeTextView != null && !TextUtils.isEmpty(text)) {
+                runOnUiThread {
+                    if (isFinal) {
+                        binding.liveTranscribeTextView.text = null
+                        binding.liveTranscribeTextView.visibility = View.INVISIBLE
+                    } else {
+                        binding.liveTranscribeTextView.text = text
+                        binding.liveTranscribeTextView.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -84,6 +114,21 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
         timer = Timer(this)
 
+        speechAPI = SpeechAPI(this)
+        speechAPI!!.addListener(listener)
+
+        // get UI element
+//        mTextSwitcher = binding.liveTranscribeTextSwitcher
+//        mTextSwitcher.setFactory {
+//            val t = TextView(this)
+//            t.setText(R.string.start_talking)
+//            t.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+//            t.setTextAppearance(android.R.style.TextAppearance_Large)
+//            t
+//        }
+//        mTextSwitcher.setInAnimation(applicationContext, android.R.anim.fade_in)
+//        mTextSwitcher.setOutAnimation(applicationContext, android.R.anim.fade_out)
+
         binding.recordImageButton.setOnClickListener {
             when (state) {
                 RELEASE -> {
@@ -91,11 +136,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
                     // 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용
-//                    binding.recordImageButton.setImageDrawable(
-//                        ContextCompat.getDrawable(
-//                            this, R.drawable.baseline_pause_circle_filled_24
-//                        )
-//                    )
                     val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
                     binding.recordImageButton.startAnimation(blinkAnimation)
                 }
@@ -104,56 +144,93 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     onRecord(false)
 
                     // '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
-//                    binding.recordImageButton.setImageDrawable(
-//                        ContextCompat.getDrawable(
-//                            this, R.drawable.circle_record
-//                        )
-//                    )
                     binding.recordImageButton.clearAnimation()
                 }
             }
         }
     }
 
-    private fun onRecord(start: Boolean) = if (start) startRecording() else stopRecording()
+    private fun onRecord(start: Boolean) = if (start) {
+        //startRecording()
+        startVoiceRecorder()
+    } else {
+        //stopRecording()
+        stopVoiceRecorder()
 
-    private fun stopRecording() {
-        recorder?.apply {
-            stop()
-            release()
-        }
-        recorder = null
 
-        timer.stop()
+    }
+
+    private fun startVoiceRecorder() {
+        voiceRecorder = VoiceRecorder(callback)
+        voiceRecorder!!.start()
+
+        state = RECORDING
+    }
+
+    private fun stopVoiceRecorder() {
+        voiceRecorder?.stop()
+        voiceRecorder = null
 
         state = RELEASE
     }
 
-    private fun startRecording() {
-        recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-            setOutputFile(fileName)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+    override fun onDestroy() {
+        speechAPI?.removeListener(listener)
+        speechAPI?.destroy()
+        speechAPI = null
 
-            try {
-                prepare()
-            } catch (e: IOException) {
-                Log.e(LOG_TAG, "prepare() failed: $e")
-            }
+        Log.e(TAG_STT, "destroy the speechAPI")
 
-            start()
-
-            displaySpeechRecognizer()
-        }
-
-        // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
-        //binding.decibelView.clearDecibel()
-
-        timer.start()
-
-        state = RECORDING
+        super.onDestroy()
     }
+
+//    private fun stopRecording() {
+//        recorder?.apply {
+//            stop()
+//            release()
+//        }
+//        recorder = null
+//
+//        timer.stop()
+//
+//        // todo recorder 중복
+//        voiceRecorder?.stop()
+//        voiceRecorder = null
+//
+//        state = RELEASE
+//    }
+
+
+
+//    private fun startRecording() {
+//        recorder = MediaRecorder().apply {
+//            setAudioSource(MediaRecorder.AudioSource.MIC)
+//            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+//            setOutputFile(fileName)
+//            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+//
+//            try {
+//                prepare()
+//            } catch (e: IOException) {
+//                Log.e(TAG_DECIBEL, "prepare() failed: $e")
+//            }
+//
+//            start()
+//
+////            displaySpeechRecognizer()
+//        }
+//
+//        // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
+//        //binding.decibelView.clearDecibel()
+//
+//        timer.start()
+//
+//        // todo recorder 중복
+//        voiceRecorder = VoiceRecorder(callback)
+//        voiceRecorder?.start()
+//
+//        state = RECORDING
+//    }
 
     private fun showRequestPermissionRationale() {
         AlertDialog.Builder(this)
@@ -193,29 +270,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
     override fun onTick(duration: Long) {
         //binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
-    }
-
-    // Create an intent that can start the Speech Recognizer activity
-    private fun displaySpeechRecognizer() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        }
-        // This starts the activity and populates the intent with the speech text.
-        startActivityForResult(intent, SPEECH_REQUEST_CODE)
-    }
-
-    // This callback is invoked when the Speech Recognizer returns.
-    // This is where you process the intent and extract the speech text from the intent.
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val spokenText: String? =
-                data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).let { results ->
-                    results?.get(0) ?: ""
-                }
-            // Do something with spokenText.
-            binding.liveTranscribeTextView.text = spokenText
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }
 
