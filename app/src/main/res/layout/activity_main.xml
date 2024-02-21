@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".presentation.MainActivity">
+    tools:context=".presentation.main.MainActivity">
 
     <ImageView
         android:id="@+id/logo"
@@ -21,7 +22,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/decibel"
-        android:layout_marginStart="110dp"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="25dp"
         android:clickable="true"
         android:onClick="onButton1Clicked" />
@@ -31,7 +32,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/subtitles"
-        android:layout_marginStart="130dp"
+        android:layout_marginStart="140dp"
         android:layout_marginTop="75dp"
         android:clickable="true"
         android:onClick="onButton2Clicked" />
@@ -40,7 +41,7 @@
         android:id="@+id/button3"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="110dp"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="125dp"
         android:clickable="true"
         android:onClick="onButton3Clicked"
@@ -53,7 +54,7 @@
         android:text="Decibel"
         android:textColor="@android:color/white"
         android:textSize="14sp"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="70dp"
         android:layout_marginTop="35dp"
         android:visibility="gone" />
 
@@ -64,7 +65,7 @@
         android:text="Subtitles"
         android:textColor="@android:color/white"
         android:textSize="14sp"
-        android:layout_marginStart="70dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="85dp"
         android:visibility="gone" />
 
@@ -75,7 +76,7 @@
         android:text="Setting"
         android:textColor="@android:color/white"
         android:textSize="14sp"
-        android:layout_marginStart="60dp"
+        android:layout_marginStart="70dp"
         android:layout_marginTop="135dp"
         android:visibility="gone" />
 

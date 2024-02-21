@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/black"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    tools:context=".presentation.subtitles.SubtitlesActivity">
+    android:background="@color/black"
+    tools:context=".presentation.subtitles.SubtitlesDetailActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 첫 번째 버튼 -->
+            <!-- textView가 중앙에 오도록 하기 위한 빈 버튼 생성 -->
             <Button
                 android:id="@+id/firstButton"
                 android:layout_width="match_parent"
@@ -30,7 +30,22 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
 
-            <!-- 버튼이 여기에 동적으로 추가될 것입니다. -->
+            <TextView
+                android:id="@+id/subtitleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <!-- 스크롤 했을 때 textView가 하단에 잘리는 것을 막기 위한 빈 버튼 생성 -->
+            <Button
+                android:id="@+id/endButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/black"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </ScrollView>

@@ -1,4 +1,4 @@
-package gdsc.allways.allears.presentation
+package gdsc.allways.allears.presentation.setting
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1,10 +1,14 @@
-package gdsc.allways.allears.presentation
+package gdsc.allways.allears.presentation.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityMainBinding
+import gdsc.allways.allears.presentation.decibel.DecibelActivity
+import gdsc.allways.allears.presentation.setting.SettingActivity
+import gdsc.allways.allears.presentation.subtitles.SubtitlesActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -53,8 +57,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.root.setOnClickListener {
+            resetButtonState()
+        }
     }
 
+    private fun resetButtonState() {
+        isFirstButtonSelected = false
+        isSecondButtonSelected = false
+        isThirdButtonSelected = false
+
+        binding.button1.setImageResource(R.drawable.decibel)
+        binding.button2.setImageResource(R.drawable.subtitles)
+        binding.button3.setImageResource(R.drawable.setting)
+        binding.decibelText.visibility = View.GONE
+        binding.subtitlesText.visibility = View.GONE
+        binding.settingText.visibility = View.GONE
+        binding.logo.visibility = View.VISIBLE
+    }
 
     // DecibelActivity로 화면 전환
     private fun navigateToDecibelActivity() {
