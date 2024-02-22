@@ -72,8 +72,6 @@ class DecibelActivity : ComponentActivity() {
 
     private fun startDecibelProcessing() {
         job = CoroutineScope(Dispatchers.Main).launch {
-            // 데시벨 처리가 시작되기 전에 팝업을 띄우는 로직 추가
-            showStartProcessingPopup()
 
             for (decibel in decibelValues) {
                 updateImagesWithDecibel(decibel)
@@ -82,32 +80,6 @@ class DecibelActivity : ComponentActivity() {
             // 모든 데시벨 값 처리 후 코루틴을 중지하고 이미지 초기화
             resetAllImages()
         }
-    }
-
-    private fun showStartProcessingPopup() {
-        val dialogView = layoutInflater.inflate(R.layout.popup_layout, null)
-
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setView(dialogView)
-
-        val alertDialog = alertDialogBuilder.create()
-
-        val yesButton = dialogView.findViewById<Button>(R.id.yes_button)
-        val noButton = dialogView.findViewById<Button>(R.id.no_button)
-
-        yesButton.setOnClickListener {
-            // 사용자가 Yes를 선택한 경우 VoiceRecognitionActivity로 이동
-            val intent = Intent(this@DecibelActivity, VoiceRecognitionActivity::class.java)
-            startActivity(intent)
-            alertDialog.dismiss()
-        }
-
-        noButton.setOnClickListener {
-            // 사용자가 No를 선택한 경우의 처리 로직을 여기에 추가
-            alertDialog.dismiss()
-        }
-
-        alertDialog.show()
     }
 
     private fun resetAllImages() {

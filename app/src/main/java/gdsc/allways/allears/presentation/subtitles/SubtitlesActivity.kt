@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivitySubtitlesBinding
 import gdsc.allways.allears.dto.SubtitleListResponseDto
@@ -88,7 +89,9 @@ class SubtitlesActivity : AppCompatActivity() {
 
                     // 자막이 생성된 날짜와 시간을 기준으로 정렬
                     subtitles?.sortedWith(compareBy({ it.createdDate }, { it.createdTime }))?.forEach { subtitle ->
+                        val customFont: Typeface? = ResourcesCompat.getFont(this@SubtitlesActivity, R.font.font)
                         val button = Button(this@SubtitlesActivity)
+                        button.typeface = customFont
                         button.background = ContextCompat.getDrawable(this@SubtitlesActivity, R.drawable.rounded_button) // 둥근 테두리 설정
 
                         // createdDate는 굵은 글꼴로 설정
