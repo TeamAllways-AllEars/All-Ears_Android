@@ -27,7 +27,11 @@ import gdsc.allways.allears.presentation.D.SpeechAPI
 import gdsc.allways.allears.presentation.D.VoiceRecorder
 import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
 import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.support.label.Category
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
@@ -70,6 +74,8 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     private lateinit var filteredModelOutput: List<Category>
     var speechDecibel: Float = 0f
     val speechDecibels: MutableList<Float> = mutableListOf()
+
+    private val decibelValues = listOf(10, 55, 30, 45, 23) // 임의의 데시벨 값
 
     private var speechAPI: SpeechAPI? = null
     private var voiceRecorder: VoiceRecorder? = null
@@ -197,6 +203,11 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         voiceRecorder = VoiceRecorder(callback, classifier)
         voiceRecorder!!.start()
 
+        // 코루틴 시작
+        //startDecibelProcessing()
+
+        var durationIndex = 0
+
         timer = Timer()
         timer.scheduleAtFixedRate(1, 500) {
 
@@ -221,6 +232,8 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
             speechDecibels.add(speechDecibel)
             val speechDecibelStr = speechDecibel.toString()
 
+
+
 //            val handler = Handler(Looper.getMainLooper())
 
             // Updating the UI
@@ -229,19 +242,78 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     // 인식되는 모든 데시벨 출력
                     //binding.temporalTextView.text = allDecibelsStr
 
-                    // Speech의 데시벨만 출력
-                    binding.temporalTextView.text = speechDecibelStr
+                    // Speech의 데시벨 수치만 출력
+                    //binding.temporalTextView.text = speechDecibelStr
 
+                    // Speech의 데시벨 뷰
                     reinitializeUI()
+                    //Log.e(TAG_STT, "$durationIndex")
+                    startSurroundingDecibelProcess(durationIndex)
                     imageViews[speechDecibelIndex].setImageResource(R.drawable.decibel_myspeech)
+
+                    //durationIndex++
+
+                    //startDecibelProcessing()
                 }
+                //durationIndex++
             }
+            durationIndex++
+
         }
 
-        // 코루틴 시작
-        //startDecibelProcessing()
-
         state = RECORDING
+    }
+
+    private fun startDecibelProcessing() {
+        job = CoroutineScope(Dispatchers.Main).launch {
+
+            while (state == RECORDING) {
+                for (decibel in decibelValues) {
+                    val middleDecibelIndex = decibel / 10
+                    when (decibel) {
+                        in 0 until 10 -> {
+                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                            imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+                        }
+                        in 10 until 90 -> {
+                            imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                            imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+                        }
+                        in 90 until 100 -> {
+                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                            imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+                        }
+                    }
+                    delay(1000) // 1초 대기
+                    reinitializeUI()
+                }
+            }
+
+            // 모든 데시벨 값 처리 후 코루틴을 중지하고 이미지 초기화
+            //reinitializeUI()
+        }
+    }
+
+    fun startSurroundingDecibelProcess(currentDuration: Int) {
+        val realIndex = currentDuration % decibelValues.size    // 0, 1, 2, 3, 4 반복
+        Log.e(TAG_STT, "${realIndex}")
+        val middleDecibelIndex = decibelValues[realIndex] / 10
+        when (middleDecibelIndex) {
+            in 0 until 10 -> {
+                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+            }
+            in 10 until 90 -> {
+                imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+            }
+            in 90 until 100 -> {
+                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+            }
+        }
     }
 
     private fun reinitializeUI() {
