@@ -92,6 +92,7 @@ class SubtitlesActivity : AppCompatActivity() {
                         val customFont: Typeface? = ResourcesCompat.getFont(this@SubtitlesActivity, R.font.font)
                         val button = Button(this@SubtitlesActivity)
                         button.typeface = customFont
+
                         button.background = ContextCompat.getDrawable(this@SubtitlesActivity, R.drawable.rounded_button) // 둥근 테두리 설정
 
                         // createdDate는 굵은 글꼴로 설정
@@ -158,7 +159,7 @@ class SubtitlesActivity : AppCompatActivity() {
     // 기기의 고유 ID 가져오기
     @SuppressLint("HardwareIds")
     private fun getDeviceId(): String {
-        Log.d("YMC", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
+        Log.d("ALLEars", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
         return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
     }
 }
