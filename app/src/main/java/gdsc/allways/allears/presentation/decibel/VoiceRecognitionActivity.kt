@@ -58,6 +58,7 @@ class VoiceRecognitionActivity : AppCompatActivity() {
                 5 -> {
                     startActivity(Intent(this, VoiceRecognitionSuccessActivity::class.java))
                     finish()
+                    return // 종료
                 }
             }
         }
@@ -70,5 +71,6 @@ class VoiceRecognitionActivity : AppCompatActivity() {
         }
         recordImageButton.setImageResource(imageResource)
     }
+
 
 }

@@ -1,5 +1,6 @@
 package gdsc.allways.allears.presentation.subtitles
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -10,6 +11,8 @@ import android.text.style.StyleSpan
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
+import android.provider.Settings
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import gdsc.allways.allears.R
@@ -19,10 +22,12 @@ import gdsc.allways.allears.dto.SubtitleResponseDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Calendar
+import java.text.SimpleDateFormat
 
 class SubtitlesActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySubtitlesBinding
-    private val apiService = SubtitleService.create()
+    private lateinit var apiService: SubtitleService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,18 +37,23 @@ class SubtitlesActivity : AppCompatActivity() {
         // ActionBar 숨기기
         supportActionBar?.hide()
 
+        // SubtitleService 초기화
+        apiService = SubtitleService.create()
+
         // 자막 추가 및 가져오기
         createAndFetchSubtitles()
     }
 
     private fun createAndFetchSubtitles() {
         // 자막 추가
-        val subtitleToAdd = SubtitleResponseDto(3, "Feb 19, 2024", "10:09 PM", "hello~ new Text gang gang gang")
+        val subtitleToAdd = SubtitleResponseDto(3, "Feb 22, 2024", "14:30 PM", "test용 자막")
         //addSubtitle(subtitleToAdd)
         fetchSubtitles()
     }
+
     private fun addSubtitle(subtitleToAdd: SubtitleResponseDto) {
-        apiService.createSubtitle(subtitleToAdd).enqueue(object : Callback<Void> {
+        val deviceId = getDeviceId() // 기기의 고유 ID 가져오기
+        apiService.createSubtitle(deviceId, subtitleToAdd).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     // 자막 추가 성공 후, 모든 자막 가져오기
@@ -59,10 +69,9 @@ class SubtitlesActivity : AppCompatActivity() {
         })
     }
 
-    private fun fetchSubtitles() {
-        val call = apiService.getAllSubtitles()
 
-        call.enqueue(object : Callback<SubtitleListResponseDto> {
+    private fun fetchSubtitles() {
+        apiService.getAllSubtitles(getDeviceId()).enqueue(object : Callback<SubtitleListResponseDto> {
             override fun onResponse(call: Call<SubtitleListResponseDto>, response: Response<SubtitleListResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitles = response.body()?.subtitleResponseDtoList
@@ -114,9 +123,7 @@ class SubtitlesActivity : AppCompatActivity() {
     }
 
     private fun fetchSubtitleById(id: Long) {
-        val call = apiService.getSubtitleById(id)
-
-        call.enqueue(object : Callback<SubtitleResponseDto> {
+        apiService.getSubtitleById(id, getDeviceId()).enqueue(object : Callback<SubtitleResponseDto> {
             override fun onResponse(call: Call<SubtitleResponseDto>, response: Response<SubtitleResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitle = response.body()
@@ -133,5 +140,12 @@ class SubtitlesActivity : AppCompatActivity() {
                 Toast.makeText(this@SubtitlesActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // 기기의 고유 ID 가져오기
+    @SuppressLint("HardwareIds")
+    private fun getDeviceId(): String {
+        Log.d("YMC", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
+        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
     }
 }

@@ -11,20 +11,21 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface SubtitleService {
 
     // PUT 요청으로 새로운 자막 생성
-    @PUT("/subtitle?identity=test")
-    fun createSubtitle(@Body subtitleResponseDto: SubtitleResponseDto): Call<Void>
+    @PUT("/subtitle")
+    fun createSubtitle(@Query("identity") identity: String, @Body subtitleResponseDto: SubtitleResponseDto): Call<Void>
 
     // GET 요청으로 모든 자막 리스트 반환
-    @GET("/subtitle?identity=test")
-    fun getAllSubtitles(): Call<SubtitleListResponseDto>
+    @GET("/subtitle")
+    fun getAllSubtitles(@Query("identity") identity: String): Call<SubtitleListResponseDto>
 
     // GET 요청으로 특정 자막 가져오기
-    @GET("/subtitle/{id}?identity=test")
-    fun getSubtitleById(@Path("id") id: Long): Call<SubtitleResponseDto>
+    @GET("/subtitle/{id}")
+    fun getSubtitleById(@Path("id") id: Long, @Query("identity") identity: String): Call<SubtitleResponseDto>
 
     companion object {
         private const val BASE_URL = "http://35.216.80.118:8080"
