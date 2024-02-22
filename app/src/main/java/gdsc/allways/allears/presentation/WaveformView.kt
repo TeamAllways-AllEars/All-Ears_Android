@@ -21,11 +21,11 @@ class WaveformView @JvmOverloads constructor(
         color = Color.RED
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         for (rectF in rectFList) {
-            canvas?.drawRect(rectF, redPaint)
+            canvas.drawRect(rectF, redPaint)
         }
     }
 
