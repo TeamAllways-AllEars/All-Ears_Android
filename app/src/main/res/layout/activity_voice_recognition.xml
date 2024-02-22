@@ -46,6 +46,7 @@
                 android:layout_marginTop="20dp"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:fontFamily="@font/font"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recordImageButton"
                 tools:text="The old book on the dusty shelf caught my attention." />
