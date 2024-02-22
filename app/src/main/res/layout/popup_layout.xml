@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/popup_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Would you like to reset user voice setting?"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:fontFamily="@font/font"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/yes_button"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Yes"
+            android:fontFamily="@font/font"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button_blue"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/no_button"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="No"
+            android:fontFamily="@font/font"
+            android:textColor="@android:color/white"
+            android:background="@drawable/rounded_button"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

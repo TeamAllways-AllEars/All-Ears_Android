@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".presentation.main.MainActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/logo"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="0dp"
+        android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/button1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/decibel"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:onClick="onButton1Clicked" />
+
+    <ImageView
+        android:id="@+id/button2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/subtitles"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="75dp"
+        android:clickable="true"
+        android:onClick="onButton2Clicked" />
+
+    <ImageView
+        android:id="@+id/button3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="125dp"
+        android:clickable="true"
+        android:onClick="onButton3Clicked"
+        android:src="@drawable/setting" />
+
+    <TextView
+        android:id="@+id/decibelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Decibel"
+        android:fontFamily="@font/font"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="35dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/subtitlesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subtitles"
+        android:fontFamily="@font/font"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="85dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/settingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Setting"
+        android:fontFamily="@font/font"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="135dp"
+        android:visibility="gone" />
+
+</androidx.wear.widget.BoxInsetLayout>

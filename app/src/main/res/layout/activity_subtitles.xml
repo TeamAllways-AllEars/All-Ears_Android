@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    tools:context=".presentation.subtitles.SubtitlesActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"> <!-- ScrollView가 화면 전체를 채우도록 설정 -->
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 첫 번째 버튼 -->
+            <Button
+                android:id="@+id/firstButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/black"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/font"
+                android:textSize="16sp" />
+
+            <!-- 버튼이 여기에 동적으로 추가될 것입니다. -->
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
