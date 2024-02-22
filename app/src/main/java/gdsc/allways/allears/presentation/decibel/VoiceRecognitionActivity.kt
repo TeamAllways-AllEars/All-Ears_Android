@@ -2,6 +2,7 @@ package gdsc.allways.allears.presentation.decibel
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,7 @@ class VoiceRecognitionActivity : AppCompatActivity() {
 
         // "SettingActivity" 텍스트 설정
         liveTranscribeTextView.text = "The old book on the dusty shelf caught my attention."
+        liveTranscribeTextView.gravity = Gravity.CENTER // 텍스트를 가운데 정렬
 
         recordImageButton.setOnClickListener {
             toggleRecordingState()
@@ -70,6 +72,7 @@ class VoiceRecognitionActivity : AppCompatActivity() {
             R.drawable.ic_mic // 정지 중이면 녹음 이미지로 변경
         }
         recordImageButton.setImageResource(imageResource)
+        liveTranscribeTextView.gravity = Gravity.CENTER // 텍스트를 가운데 정렬
     }
 
 

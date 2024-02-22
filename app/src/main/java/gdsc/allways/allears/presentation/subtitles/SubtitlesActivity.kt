@@ -24,11 +24,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.Calendar
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SubtitlesActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySubtitlesBinding
     private lateinit var apiService: SubtitleService
-
+    private val testText = "You are my everything\\nMy everything\\nMy everything\\nYou are my everything\\nMy everything\\n\\n비가 내리는 날엔\\n우리 방안에 누워 아무 말이 없고\\n감은 눈을 마주 보면 모든 게 우리거야\\n조금 핼쑥한 얼굴로 날 찾아올 때도\\n가끔 발칙한 얘기로 날 놀랠킬 때도\\n\\nYou are my everything\\nMy everything\\nMy everything\\nYou are my everything\\nMy everything\\n\\n넌 내 모든 거야\\n내 여름이고 내 꿈이야\\n넌 내 모든 거야\\n나 있는 그대로 받아줄게요\n"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySubtitlesBinding.inflate(layoutInflater)
@@ -44,10 +45,19 @@ class SubtitlesActivity : AppCompatActivity() {
         createAndFetchSubtitles()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun createAndFetchSubtitles() {
+        // 현재 날짜와 시간 가져오기
+        val currentDateTime = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy, EEE") // 날짜 포맷 지정
+        val timeFormat = SimpleDateFormat("HH:mm a") // 시간 포맷 지정
+        val currentDate = dateFormat.format(currentDateTime.time).toUpperCase(Locale.getDefault()) // 대문자로 변환
+        val currentTime = timeFormat.format(currentDateTime.time)
+
         // 자막 추가
-        val subtitleToAdd = SubtitleResponseDto(3, "Feb 22, 2024", "14:30 PM", "test용 자막")
+        val subtitleToAdd = SubtitleResponseDto(3, currentDate, currentTime, testText)
         //addSubtitle(subtitleToAdd)
+        Log.d("ALLEars", currentDate + "\n" + currentTime + "\n" + testText)
         fetchSubtitles()
     }
 
