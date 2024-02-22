@@ -92,10 +92,15 @@ dependencies {
     //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     // Import tflite dependencies
-    implementation 'org.tensorflow:tensorflow-lite:2.4.0'
+    //implementation 'org.tensorflow:tensorflow-lite:2.4.0'
     // The GPU delegate library is optional. Depend on it as needed.
     //implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly-SNAPSHOT'    // 추가 시 에러 남. 원인 파악 필요.
-    implementation 'org.tensorflow:tensorflow-lite-support:0.2.0'
+    //implementation 'org.tensorflow:tensorflow-lite-support:0.2.0'
+
+    // Import the Audio Task Library dependency (NNAPI is included)
+    implementation 'org.tensorflow:tensorflow-lite-task-audio:0.4.0'
+    // Import the GPU delegate plugin Library for GPU inference
+    implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0'
 
     // cloud client library
     implementation 'com.google.cloud:google-cloud-speech:4.30.0'

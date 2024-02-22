@@ -3,8 +3,12 @@ package gdsc.allways.allears.presentation.D;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import org.tensorflow.lite.support.audio.TensorAudio;
+import org.tensorflow.lite.task.audio.classifier.AudioClassifier;
 
 /**
  * Continuously records audio and notifies the {@link VoiceRecorder.Callback} when voice (or any
@@ -15,6 +19,8 @@ import androidx.annotation.NonNull;
  * for the device. Use {@link #getSampleRate()} to get the selected value.</p>
  */
 public class VoiceRecorder {
+
+    private static final String TAG = "MyVoiceRecorder";
     private static final int[] SAMPLE_RATE_CANDIDATES = new int[]{16000, 11025, 22050, 44100};
 
     private static final int CHANNEL = AudioFormat.CHANNEL_IN_MONO;
@@ -30,6 +36,7 @@ public class VoiceRecorder {
          * Called when the recorder starts hearing voice.
          */
         public void onVoiceStart() {
+            Log.e(TAG, "onVoiceStart() 호출");
         }
 
         /**
@@ -39,18 +46,29 @@ public class VoiceRecorder {
          * @param size The size of the actual data in {@code data}.
          */
         public void onVoice(byte[] data, int size) {
+            Log.e(TAG, "onVoice() 호출");
         }
 
         /**
          * Called when the recorder stops hearing voice.
          */
         public void onVoiceEnd() {
+            Log.e(TAG, "onVoiceEnd() 호출");
         }
     }
 
     private final Callback mCallback;
 
-    private AudioRecord mAudioRecord;
+    public AudioRecord tensorAudioRecord;
+    public AudioRecord sttAudioRecord;
+
+    // DECIBEL: define the minimum threshold
+//    private float probabilityThreshold = 0.3f;
+//    public String outputStr;
+
+    TensorAudio tensor;
+    AudioClassifier mClassifier;
+    //AudioRecord tensorAudioRecord;
 
     private Thread mThread;
 
@@ -64,8 +82,9 @@ public class VoiceRecorder {
     /** The timestamp when the current voice is started. */
     private long mVoiceStartedMillis;
 
-    public VoiceRecorder(@NonNull Callback callback) {
+    public VoiceRecorder(@NonNull Callback callback, AudioClassifier classifier) {
         mCallback = callback;
+        mClassifier = classifier;
     }
 
     /**
@@ -76,13 +95,19 @@ public class VoiceRecorder {
     public void start() {
         // Stop recording if it is currently ongoing.
         stop();
+
         // Try to create a new recording session.
-        mAudioRecord = createAudioRecord();
-        if (mAudioRecord == null) {
-            throw new RuntimeException("Cannot instantiate VoiceRecorder");
+        sttAudioRecord = createAudioRecord();
+        tensorAudioRecord = mClassifier.createAudioRecord();
+        if (sttAudioRecord == null) {
+            throw new RuntimeException("Cannot instantiate sttAudioRecorder");
+        }
+        if (tensorAudioRecord == null) {
+            throw new RuntimeException("Cannot instantiate tensorAudioRecorder");
         }
         // Start recording.
-        mAudioRecord.startRecording();
+        sttAudioRecord.startRecording();
+        tensorAudioRecord.startRecording();
         // Start processing the captured audio.
         mThread = new Thread(new ProcessVoice());
         mThread.start();
@@ -98,10 +123,15 @@ public class VoiceRecorder {
                 mThread.interrupt();
                 mThread = null;
             }
-            if (mAudioRecord != null) {
-                mAudioRecord.stop();
-                mAudioRecord.release();
-                mAudioRecord = null;
+//            if (tensorAudioRecord != null) {
+//                tensorAudioRecord.stop();
+//                tensorAudioRecord.release();
+//                tensorAudioRecord = null;
+//            }
+            if (sttAudioRecord != null) {
+                sttAudioRecord.stop();
+                sttAudioRecord.release();
+                sttAudioRecord = null;
             }
             mBuffer = null;
         }
@@ -123,8 +153,8 @@ public class VoiceRecorder {
      * @return The sample rate of recorded audio.
      */
     public int getSampleRate() {
-        if (mAudioRecord != null) {
-            return mAudioRecord.getSampleRate();
+        if (sttAudioRecord != null) {
+            return sttAudioRecord.getSampleRate();
         }
         return 0;
     }
@@ -166,7 +196,7 @@ public class VoiceRecorder {
                     if (Thread.currentThread().isInterrupted()) {
                         break;
                     }
-                    final int size = mAudioRecord.read(mBuffer, 0, mBuffer.length);
+                    final int size = sttAudioRecord.read(mBuffer, 0, mBuffer.length);
                     final long now = System.currentTimeMillis();
                     if (isHearingVoice(mBuffer, size)) {
                         if (mLastVoiceHeardMillis == Long.MAX_VALUE) {

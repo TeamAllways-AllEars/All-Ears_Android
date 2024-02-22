@@ -39,7 +39,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"
+            app:layout_constraintBottom_toTopOf="@id/temporalTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/recordImageButton">
@@ -173,6 +173,17 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/temporalTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/decibelContainer"
+            tools:text="텐서플로우 테스트" />
+
+        <TextView
             android:id="@+id/liveTranscribeTextView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -182,6 +193,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/decibelContainer" />
+            app:layout_constraintTop_toBottomOf="@id/temporalTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>

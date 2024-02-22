@@ -10,7 +10,6 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
-import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -18,6 +17,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -27,6 +27,12 @@ import gdsc.allways.allears.presentation.D.SpeechAPI
 import gdsc.allways.allears.presentation.D.VoiceRecorder
 import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
 import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
+import kotlinx.coroutines.Job
+import org.tensorflow.lite.support.audio.TensorAudio
+import org.tensorflow.lite.support.label.Category
+import org.tensorflow.lite.task.audio.classifier.AudioClassifier
+import java.util.Timer
+import kotlin.concurrent.scheduleAtFixedRate
 
 //private const val TAG_DECIBEL = "MediaRecordTest"
 private const val TAG_STT = "SpeechToTextTest"
@@ -47,9 +53,23 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
     private lateinit var binding: ActivityDecibelBinding
     private lateinit var timer: Timer
-//    private var recorder: MediaRecorder? = null
     private var fileName: String = ""
     private var state: State = RELEASE
+
+    // Defining the model to be used
+    var modelPath = "1.tflite"
+
+    // Defining the minimum threshold
+    var probabilityThreshold: Float = 0.10f // original: 0.3f
+
+    lateinit var tensor:TensorAudio
+    lateinit var classifier: AudioClassifier
+
+    private lateinit var imageViews: List<ImageView>
+    private var job: Job? = null
+    private lateinit var filteredModelOutput: List<Category>
+    var speechDecibel: Float = 0f
+    val speechDecibels: MutableList<Float> = mutableListOf()
 
     private var speechAPI: SpeechAPI? = null
     private var voiceRecorder: VoiceRecorder? = null
@@ -112,22 +132,37 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         // Record to the external cache directory for visibility
         fileName = "${externalCacheDir?.absolutePath}/audiorecordtest.3gp"
 
-        timer = Timer(this)
+        //timer = Timer(this)
+
+        // Initialization
+        // load the model from the assets folder
+        classifier = AudioClassifier.createFromFile(this, modelPath);
+
+        // create an audio recorder
+        // `tensor`: store the recording for inference & build the format specification for the recorder.
+        tensor = classifier.createInputTensorAudio();
+
+        // show the audio recorder specification
+        val format = classifier.requiredTensorAudioFormat
+//        val recorderSpecs = "Number Of Channels: ${format.channels}\n" +
+//                "Sample Rate: ${format.sampleRate}"
+        //recorderSpecsTextView.text = recorderSpecs
 
         speechAPI = SpeechAPI(this)
         speechAPI!!.addListener(listener)
 
-        // get UI element
-//        mTextSwitcher = binding.liveTranscribeTextSwitcher
-//        mTextSwitcher.setFactory {
-//            val t = TextView(this)
-//            t.setText(R.string.start_talking)
-//            t.gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-//            t.setTextAppearance(android.R.style.TextAppearance_Large)
-//            t
-//        }
-//        mTextSwitcher.setInAnimation(applicationContext, android.R.anim.fade_in)
-//        mTextSwitcher.setOutAnimation(applicationContext, android.R.anim.fade_out)
+        imageViews = listOf(
+            binding.image1,
+            binding.image2,
+            binding.image3,
+            binding.image4,
+            binding.image5,
+            binding.image6,
+            binding.image7,
+            binding.image8,
+            binding.image9,
+            binding.image10
+        )
 
         binding.recordImageButton.setOnClickListener {
             when (state) {
@@ -156,20 +191,91 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     } else {
         //stopRecording()
         stopVoiceRecorder()
-
-
     }
 
     private fun startVoiceRecorder() {
-        voiceRecorder = VoiceRecorder(callback)
+        voiceRecorder = VoiceRecorder(callback, classifier)
         voiceRecorder!!.start()
+
+        timer = Timer()
+        timer.scheduleAtFixedRate(1, 500) {
+
+            // Classify audio data
+            //val numberOfSamples = tensor.load(record)
+            tensor.load(voiceRecorder!!.tensorAudioRecord)
+            val output = classifier.classify(tensor)
+
+            // Filter out classifications with low probability
+            // Purpose: to have better inference results
+            filteredModelOutput = output[0].categories.filter {
+                it.score > probabilityThreshold
+            }
+
+            // Creating a multiline string with the filtered results
+            val allDecibelsStr =
+                filteredModelOutput.sortedBy { -it.score }
+                    .joinToString(separator = "\n") { "${it.label} -> ${it.score} " }
+
+            speechDecibel = filteredModelOutput.find { it.label == "Speech" }?.score ?: 0f
+            val speechDecibelIndex = (speechDecibel * 10).toInt() - 1
+            speechDecibels.add(speechDecibel)
+            val speechDecibelStr = speechDecibel.toString()
+
+//            val handler = Handler(Looper.getMainLooper())
+
+            // Updating the UI
+            if (allDecibelsStr.isNotEmpty() && speechDecibel > 0f) {
+                runOnUiThread {
+                    // 인식되는 모든 데시벨 출력
+                    //binding.temporalTextView.text = allDecibelsStr
+
+                    // Speech의 데시벨만 출력
+                    binding.temporalTextView.text = speechDecibelStr
+
+                    reinitializeUI()
+                    imageViews[speechDecibelIndex].setImageResource(R.drawable.decibel_myspeech)
+                }
+            }
+        }
+
+        // 코루틴 시작
+        //startDecibelProcessing()
 
         state = RECORDING
     }
 
+    private fun reinitializeUI() {
+        imageViews.map { it.setImageResource(R.drawable.decibel_unit) }
+    }
+
+//    private fun startDecibelProcessing() {
+//        job = CoroutineScope(Dispatchers.Main).launch {
+//            val lastSpeechDecibel = speechDecibels.last()
+//            updateImagesWithDecibel(lastSpeechDecibel)
+//            delay(1000) // 1초 대기
+//            // 모든 데시벨 값 처리 후 코루틴을 중지하고 이미지 초기화
+//            //resetAllImages()
+//        }
+//    }
+
+//    private fun updateImagesWithDecibel(decibel: Float) {
+//        imageViews.map { imageView ->
+//            imageView.setImageResource(R.drawable.decibel_unit)
+//        }
+//
+//        val indexToUpdate = (decibel * 10).toInt() - 1
+//        if (indexToUpdate in imageViews.indices) {
+//            imageViews[indexToUpdate].setImageResource(R.drawable.current_decibel)
+//        }
+//    }
+
     private fun stopVoiceRecorder() {
         voiceRecorder?.stop()
         voiceRecorder = null
+
+        timer.cancel()
+
+        speechDecibels.clear()
 
         state = RELEASE
     }
