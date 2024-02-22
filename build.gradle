@@ -1,10 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+//apply plugin: 'kotlin'
+//apply plugin: 'com.google.protobuf'
+
 buildscript {
+    // ---- 내가 추가한 부분
+    repositories {
+        //google()
+        jcenter()
+        mavenCentral()
+        //maven { url 'https://maven.google.com'}
+    }
+    dependencies {
+//        classpath 'com.android.tools.build:gradle:8.2.2'
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
+        //classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+    // ----
     ext {
         wear_compose_version = '1.0.0'
         horologist_version = '0.1.5'
         wear_tiles_version = '1.1.0'
     }
-}// Top-level build file where you can add configuration options common to all sub-projects/modules.
+}
+
 plugins {
     id 'com.android.application' version '8.2.2' apply false
     id 'com.android.library' version '8.2.2' apply false
