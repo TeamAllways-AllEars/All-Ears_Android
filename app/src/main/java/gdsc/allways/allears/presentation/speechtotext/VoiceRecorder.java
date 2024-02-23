@@ -1,4 +1,4 @@
-package gdsc.allways.allears.presentation.D;
+package gdsc.allways.allears.presentation.speechtotext;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
