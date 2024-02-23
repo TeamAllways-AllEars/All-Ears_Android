@@ -28,7 +28,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@color/black"
                 android:textColor="@android:color/white"
-                android:fontFamily="@font/font"
+                android:fontFamily="@font/font_inter_regular"
                 android:textSize="16sp" />
 
             <!-- 버튼이 여기에 동적으로 추가될 것입니다. -->

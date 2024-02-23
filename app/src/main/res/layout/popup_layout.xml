@@ -12,7 +12,7 @@
         android:text="Would you like to reset user voice setting?"
         android:textSize="16sp"
         android:textColor="@android:color/white"
-        android:fontFamily="@font/font"
+        android:fontFamily="@font/font_inter_regular"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:layout_marginBottom="16dp"/>
@@ -28,7 +28,7 @@
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:text="Yes"
-            android:fontFamily="@font/font"
+            android:fontFamily="@font/font_inter_regular"
             android:textColor="@android:color/white"
             android:background="@drawable/rounded_button_blue"
             android:layout_marginEnd="8dp" />
@@ -38,7 +38,7 @@
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:text="No"
-            android:fontFamily="@font/font"
+            android:fontFamily="@font/font_inter_regular"
             android:textColor="@android:color/white"
             android:background="@drawable/rounded_button"
             android:layout_marginStart="8dp" />

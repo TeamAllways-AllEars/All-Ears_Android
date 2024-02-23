@@ -20,7 +20,7 @@
         app:layout_constraintVertical_bias="0.0">
 
         <!-- 나머지 화면의 내용 -->
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_boxedEdges="all">
@@ -46,13 +46,10 @@
                 android:layout_marginTop="20dp"
                 android:textColor="@color/white"
                 android:textSize="14sp"
-                android:fontFamily="@font/font"
+                android:fontFamily="@font/font_inter_regular"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recordImageButton"
                 tools:text="The old book on the dusty shelf caught my attention." />
-
-        </android.support.constraint.ConstraintLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.wear.widget.BoxInsetLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
-                android:fontFamily="@font/font"/>
+                android:fontFamily="@font/font_inter_regular"/>
 
             <!-- 스크롤 했을 때 textView가 하단에 잘리는 것을 막기 위한 빈 버튼 생성 -->
             <Button

@@ -91,7 +91,7 @@ class SubtitlesActivity : AppCompatActivity() {
 
                     // 자막이 생성된 날짜와 시간을 기준으로 정렬
                     subtitles?.sortedWith(compareBy({ it.createdDate }, { it.createdTime }))?.forEach { subtitle ->
-                        val customFont: Typeface? = ResourcesCompat.getFont(this@SubtitlesActivity, R.font.font)
+                        val customFont: Typeface? = ResourcesCompat.getFont(this@SubtitlesActivity, R.font.font_inter_regular)
                         val button = Button(this@SubtitlesActivity)
                         button.typeface = customFont
 
