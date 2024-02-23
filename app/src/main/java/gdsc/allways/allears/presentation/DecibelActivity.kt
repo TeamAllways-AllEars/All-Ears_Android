@@ -177,26 +177,25 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     // 권한 확인 후 녹음 실행
                     requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
-                    // 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용
-//                    val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
-//                    binding.recordImageButton.startAnimation(blinkAnimation)
-                        // 노란색 멈춤 버튼을 띄우는 것으로 변경
+                    // 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 빨강색 녹음 버튼을 깜빡이기 (animation 적용)
                     binding.recordImageButton.setImageDrawable(
                         ContextCompat.getDrawable(
-                            this, R.drawable.ic_mic_stop
+                            this, R.drawable.ic_mic
                         )
                     )
+                    val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
+                    binding.recordImageButton.startAnimation(blinkAnimation)
                 }
                 RECORDING -> {
                     // 녹음 중지
                     onRecord(false)
 
                     // '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
-                    //binding.recordImageButton.clearAnimation()
-                        // 다시 빨간 녹음 버튼을 띄우는 것으로 변경
+                    binding.recordImageButton.clearAnimation()
+                    // 그리고 노란색 멈춤 버튼이 띄워짐
                     binding.recordImageButton.setImageDrawable(
                         ContextCompat.getDrawable(
-                            this, R.drawable.ic_mic
+                            this, R.drawable.ic_mic_stop
                         )
                     )
                 }
