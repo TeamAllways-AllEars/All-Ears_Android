@@ -18,9 +18,9 @@ Client of "All Ears" is a `WearOS` application and requires the following depend
   <img alt="GCP STT" src ="https://img.shields.io/badge/GCP STT-4285F4.svg?style=for-the-badge&logo=googlecloud&logoColor=white"/>
 </div>
 
-<img width="1920" alt="allears-architecture-android" src="https://github.com/TeamAllways-AllEars/All-Ears_Android/assets/89632139/537de976-71dc-4ac0-8f1b-a136a690e79c">
+<img width="1920" alt="allears-architecture-android" src="https://github.com/TeamAllways-AllEars/All-Ears_Android/assets/89632139/e6ed4554-d6e1-43c0-bb92-42e4875ca379">
 
-Client of "All Ears" uses the **GCP STT API** for **Live Captioning**. To run this code with your GCP resource, make sure to apply your API key for the **GCP STT API Service account** in the `app/src/main/res/raw/credential3.json` file (Do not change the directory or file name). Please create a Service account for STT in GCP and apply the JSON key file in your project. The format of your JSON API key file should look like this:
+Client of "All Ears" uses the **GCP STT API** for **Live Captioning**. To run this code with your GCP resource, make sure to apply your API key for the **GCP STT API Service account** in the `app/src/main/res/raw/credential3.json` file (❗Do not change the directory or file name❗). Please create a Service account for STT in GCP and apply the JSON key file in your project. The format of your JSON API key file should look like this:
 ```json
 {
   "type": "service_account",
