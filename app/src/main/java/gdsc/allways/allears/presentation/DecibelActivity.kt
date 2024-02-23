@@ -21,6 +21,7 @@ import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
 import gdsc.allways.allears.presentation.D.SpeechAPI
@@ -177,15 +178,27 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
 
                     // 녹음 시작과 동시에 '녹음 중(ing)'을 나타내도록 녹음 버튼을 깜빡이기 -- animation 적용
-                    val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
-                    binding.recordImageButton.startAnimation(blinkAnimation)
+//                    val blinkAnimation = AnimationUtils.loadAnimation(applicationContext, R.anim.blink_animation)
+//                    binding.recordImageButton.startAnimation(blinkAnimation)
+                        // 노란색 멈춤 버튼을 띄우는 것으로 변경
+                    binding.recordImageButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            this, R.drawable.ic_mic_stop
+                        )
+                    )
                 }
                 RECORDING -> {
                     // 녹음 중지
                     onRecord(false)
 
                     // '녹음 중이 아님'을 나타내도록 녹음 버튼의 깜박임 중지
-                    binding.recordImageButton.clearAnimation()
+                    //binding.recordImageButton.clearAnimation()
+                        // 다시 빨간 녹음 버튼을 띄우는 것으로 변경
+                    binding.recordImageButton.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            this, R.drawable.ic_mic
+                        )
+                    )
                 }
             }
         }
@@ -213,7 +226,7 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
             // Classify audio data
             //val numberOfSamples = tensor.load(record)
-            tensor.load(voiceRecorder!!.tensorAudioRecord)
+            tensor.load(voiceRecorder?.tensorAudioRecord)
             val output = classifier.classify(tensor)
 
             // Filter out classifications with low probability

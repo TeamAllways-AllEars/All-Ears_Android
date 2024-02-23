@@ -16,7 +16,8 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/circle_record"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_mic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -172,16 +173,16 @@
 
         </LinearLayout>
 
-<!--        <TextView-->
-<!--            android:id="@+id/temporalTextView"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:textSize="10sp"-->
-<!--            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/decibelContainer"-->
-<!--            tools:text="텐서플로우 테스트" />-->
+        <!--        <TextView-->
+        <!--            android:id="@+id/temporalTextView"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:textSize="10sp"-->
+        <!--            app:layout_constraintBottom_toTopOf="@id/liveTranscribeTextView"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/decibelContainer"-->
+        <!--            tools:text="텐서플로우 테스트" />-->
 
         <TextView
             android:id="@+id/liveTranscribeTextView"
