@@ -1,7 +1,6 @@
 package gdsc.allways.allears.presentation.subtitles
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,7 +12,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import android.provider.Settings
-import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -54,12 +52,12 @@ class SubtitlesActivity : AppCompatActivity() {
         val currentDateTime = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("MMM dd, yyyy, EEE") // 날짜 포맷 지정
         val timeFormat = SimpleDateFormat("HH:mm a") // 시간 포맷 지정
-        val currentDate = dateFormat.format(currentDateTime.time).toUpperCase(Locale.getDefault()) // 대문자로 변환
+        val currentDate = dateFormat.format(currentDateTime.time).uppercase(Locale.getDefault()) // 대문자로 변환
         val currentTime = timeFormat.format(currentDateTime.time)
 
         // 자막 추가
         val subtitleToAdd = SubtitleResponseDto(3, currentDate, currentTime, testText)
-        addSubtitle(subtitleToAdd)
+        //addSubtitle(subtitleToAdd)
         Log.d("ALLEars", currentDate + "\n" + currentTime + "\n" + testText)
         fetchSubtitles()
     }
@@ -170,7 +168,7 @@ class SubtitlesActivity : AppCompatActivity() {
     // 원래 by 예지
     @SuppressLint("HardwareIds")
     fun getMyDeviceId(): String {
-        Log.d("ALLEars", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
+        Log.d("ALLEars_getMyDeviceId", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
         return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
     }
 }
