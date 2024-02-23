@@ -191,10 +191,21 @@
             android:fontFamily="@font/font_inter_regular"
             android:gravity="center_horizontal"
             android:text="@string/start_talking"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/decibelContainer" />
+
+<!--        <ListView-->
+<!--            android:id="@+id/mySubtitleListView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:scrollbars="none"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/liveTranscribeTextView"-->
+<!--            android:transcriptMode="normal"/>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>

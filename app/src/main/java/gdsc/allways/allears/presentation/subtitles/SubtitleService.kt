@@ -2,6 +2,7 @@
 
 package gdsc.allways.allears.presentation.subtitles
 
+import gdsc.allways.allears.dto.SubtitleCreateRequestDto
 import gdsc.allways.allears.dto.SubtitleListResponseDto
 import gdsc.allways.allears.dto.SubtitleResponseDto
 import retrofit2.Call
@@ -9,15 +10,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.PUT
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SubtitleService {
 
-    // PUT 요청으로 새로운 자막 생성
-    @PUT("/subtitle")
-    fun createSubtitle(@Query("identity") identity: String, @Body subtitleResponseDto: SubtitleResponseDto): Call<Void>
+    // POST 요청으로 새로운 자막 생성
+    @POST("/subtitle")
+    fun createSubtitle(@Query("identity") identity: String, @Body subtitleText: String): Call<SubtitleCreateRequestDto>
 
     // GET 요청으로 모든 자막 리스트 반환
     @GET("/subtitle")
