@@ -311,7 +311,7 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         val realIndex = currentDuration % decibelValues.size    // 0, 1, 2, 3, 4 반복
         Log.e(TAG_STT, "${realIndex}")
         val middleDecibelIndex = decibelValues[realIndex] / 10
-        when (middleDecibelIndex) {
+        when (decibelValues[realIndex]) {
             in 0 until 10 -> {
                 imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
                 imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
