@@ -75,5 +75,11 @@ class VoiceRecognitionActivity : AppCompatActivity() {
         liveTranscribeTextView.gravity = Gravity.CENTER // 텍스트를 가운데 정렬
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        if (clickCount < 5) {
+            // clickCount가 5보다 작은 경우 VoiceRecognitionFailActivity를 실행
+            startActivity(Intent(this, VoiceRecognitionFailActivity::class.java))
+        }
+    }
 }
