@@ -59,13 +59,13 @@ class SubtitlesActivity : AppCompatActivity() {
 
         // 자막 추가
         val subtitleToAdd = SubtitleResponseDto(3, currentDate, currentTime, testText)
-        //addSubtitle(subtitleToAdd)
+        addSubtitle(subtitleToAdd)
         Log.d("ALLEars", currentDate + "\n" + currentTime + "\n" + testText)
         fetchSubtitles()
     }
 
     private fun addSubtitle(subtitleToAdd: SubtitleResponseDto) {
-        val deviceId = getDeviceId(this) // 기기의 고유 ID 가져오기
+        val deviceId = getMyDeviceId() // 기기의 고유 ID 가져오기
         apiService.createSubtitle(deviceId, subtitleToAdd).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
@@ -84,7 +84,7 @@ class SubtitlesActivity : AppCompatActivity() {
 
 
     private fun fetchSubtitles() {
-        apiService.getAllSubtitles(getDeviceId(this)).enqueue(object : Callback<SubtitleListResponseDto> {
+        apiService.getAllSubtitles(getMyDeviceId()).enqueue(object : Callback<SubtitleListResponseDto> {
             override fun onResponse(call: Call<SubtitleListResponseDto>, response: Response<SubtitleListResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitles = response.body()?.subtitleResponseDtoList
@@ -139,7 +139,7 @@ class SubtitlesActivity : AppCompatActivity() {
     }
 
     private fun fetchSubtitleById(id: Long) {
-        apiService.getSubtitleById(id, getDeviceId(this)).enqueue(object : Callback<SubtitleResponseDto> {
+        apiService.getSubtitleById(id, getMyDeviceId()).enqueue(object : Callback<SubtitleResponseDto> {
             override fun onResponse(call: Call<SubtitleResponseDto>, response: Response<SubtitleResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitle = response.body()
@@ -160,11 +160,17 @@ class SubtitlesActivity : AppCompatActivity() {
 
     // 기기의 고유 ID 가져오기
         // 0223 01:31 에러 발생있던 지점
+//    @SuppressLint("HardwareIds")
+//    private fun getDeviceId(context: Context): String {
+//        Log.d("ALLEars", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
+//        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+//        return telephonyManager.deviceId
+//    }
+
+    // 원래 by 예지
     @SuppressLint("HardwareIds")
-    private fun getDeviceId(context: Context): String {
+    fun getMyDeviceId(): String {
         Log.d("ALLEars", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
-//        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        return telephonyManager.deviceId
+        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
     }
 }
