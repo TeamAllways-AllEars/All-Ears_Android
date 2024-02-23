@@ -114,6 +114,7 @@ dependencies {
     implementation('com.google.auth:google-auth-library-oauth2-http:0.7.0') {
         exclude module: 'httpclient'
     }
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     // You need to depend on the lite runtime library, not protobuf-java
     //implementation 'com.google.protobuf:protobuf-lite:3.0.0'
 

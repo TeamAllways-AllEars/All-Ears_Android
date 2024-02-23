@@ -1,6 +1,7 @@
 package gdsc.allways.allears.presentation.subtitles
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -12,6 +13,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -63,7 +65,7 @@ class SubtitlesActivity : AppCompatActivity() {
     }
 
     private fun addSubtitle(subtitleToAdd: SubtitleResponseDto) {
-        val deviceId = getDeviceId() // 기기의 고유 ID 가져오기
+        val deviceId = getDeviceId(this) // 기기의 고유 ID 가져오기
         apiService.createSubtitle(deviceId, subtitleToAdd).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
@@ -82,7 +84,7 @@ class SubtitlesActivity : AppCompatActivity() {
 
 
     private fun fetchSubtitles() {
-        apiService.getAllSubtitles(getDeviceId()).enqueue(object : Callback<SubtitleListResponseDto> {
+        apiService.getAllSubtitles(getDeviceId(this)).enqueue(object : Callback<SubtitleListResponseDto> {
             override fun onResponse(call: Call<SubtitleListResponseDto>, response: Response<SubtitleListResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitles = response.body()?.subtitleResponseDtoList
@@ -137,7 +139,7 @@ class SubtitlesActivity : AppCompatActivity() {
     }
 
     private fun fetchSubtitleById(id: Long) {
-        apiService.getSubtitleById(id, getDeviceId()).enqueue(object : Callback<SubtitleResponseDto> {
+        apiService.getSubtitleById(id, getDeviceId(this)).enqueue(object : Callback<SubtitleResponseDto> {
             override fun onResponse(call: Call<SubtitleResponseDto>, response: Response<SubtitleResponseDto>) {
                 if (response.isSuccessful) {
                     val subtitle = response.body()
@@ -157,9 +159,12 @@ class SubtitlesActivity : AppCompatActivity() {
     }
 
     // 기기의 고유 ID 가져오기
+        // 0223 01:31 에러 발생있던 지점
     @SuppressLint("HardwareIds")
-    private fun getDeviceId(): String {
+    private fun getDeviceId(context: Context): String {
         Log.d("ALLEars", Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID))
-        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+//        return Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        return telephonyManager.deviceId
     }
 }
