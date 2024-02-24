@@ -36,7 +36,7 @@ public class VoiceRecorder {
          * Called when the recorder starts hearing voice.
          */
         public void onVoiceStart() {
-            Log.e(TAG, "onVoiceStart() 호출");
+            Log.i(TAG, "onVoiceStart() 호출");
         }
 
         /**
@@ -46,14 +46,14 @@ public class VoiceRecorder {
          * @param size The size of the actual data in {@code data}.
          */
         public void onVoice(byte[] data, int size) {
-            Log.e(TAG, "onVoice() 호출");
+            Log.i(TAG, "onVoice() 호출");
         }
 
         /**
          * Called when the recorder stops hearing voice.
          */
         public void onVoiceEnd() {
-            Log.e(TAG, "onVoiceEnd() 호출");
+            Log.i(TAG, "onVoiceEnd() 호출");
         }
     }
 

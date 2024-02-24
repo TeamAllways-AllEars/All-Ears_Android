@@ -27,6 +27,8 @@ import java.util.Calendar
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+private const val TAG_SUBTITLE = "SubtitlesActivityTest"
+
 class SubtitlesActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySubtitlesBinding
     private lateinit var apiService: SubtitleService
@@ -85,6 +87,7 @@ class SubtitlesActivity : AppCompatActivity() {
         apiService.getAllSubtitles(getMyDeviceId()).enqueue(object : Callback<SubtitleListResponseDto> {
             override fun onResponse(call: Call<SubtitleListResponseDto>, response: Response<SubtitleListResponseDto>) {
                 if (response.isSuccessful) {
+                    Log.i(TAG_SUBTITLE, "Retrofit fetchSubtitles()_onResponse(): 성공")
                     val subtitles = response.body()?.subtitleResponseDtoList
 
                     // 자막이 생성된 날짜와 시간을 기준으로 정렬
@@ -131,6 +134,7 @@ class SubtitlesActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SubtitleListResponseDto>, t: Throwable) {
+                Log.i(TAG_SUBTITLE, "Retrofit fetchSubtitles_onFailure(): $t")
                 Toast.makeText(this@SubtitlesActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
@@ -140,6 +144,7 @@ class SubtitlesActivity : AppCompatActivity() {
         apiService.getSubtitleById(id, getMyDeviceId()).enqueue(object : Callback<SubtitleResponseDto> {
             override fun onResponse(call: Call<SubtitleResponseDto>, response: Response<SubtitleResponseDto>) {
                 if (response.isSuccessful) {
+                    Log.i(TAG_SUBTITLE, "Retrofit fetchSubtitleById()_onResponse(): 성공")
                     val subtitle = response.body()
                     // 클릭한 자막의 내용을 가져와 SubtitlesDetailActivity로 전달
                     val intent = Intent(this@SubtitlesActivity, SubtitlesDetailActivity::class.java)
@@ -151,6 +156,7 @@ class SubtitlesActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SubtitleResponseDto>, t: Throwable) {
+                Log.i(TAG_SUBTITLE, "Retrofit fetchSubtitleById_onFailure(): $t")
                 Toast.makeText(this@SubtitlesActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })

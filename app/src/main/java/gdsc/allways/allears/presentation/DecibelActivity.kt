@@ -18,7 +18,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,7 +31,6 @@ import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
 import gdsc.allways.allears.presentation.speechtotext.SpeechAPI
 import gdsc.allways.allears.presentation.speechtotext.VoiceRecorder
 import gdsc.allways.allears.presentation.subtitles.SubtitleService
-import kotlinx.coroutines.Job
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.support.label.Category
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
@@ -42,15 +40,12 @@ import retrofit2.Response
 import java.util.Timer
 import kotlin.concurrent.scheduleAtFixedRate
 
-//private const val TAG_DECIBEL = "MediaRecordTest"
-private const val TAG_STT = "SpeechToTextTest"
 
 class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
     companion object {
         private const val REQUEST_RECORD_AUDIO_CODE = 200
-//        private const val REQUEST_SPEECH_CODE = 0
-//        private val PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.INTERNET, Manifest.permission.WAKE_LOCK)
+        private const val TAG_STT = "SpeechToTextTest"
     }
 
     // 상태 관리
@@ -68,21 +63,25 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     var modelPath = "1.tflite"
 
     // Defining the minimum threshold
-    var probabilityThreshold: Float = 0.10f // original: 0.3f
+    var probabilityThreshold: Float = 0.05f // original: 0.3f
 
     lateinit var tensor:TensorAudio
     lateinit var classifier: AudioClassifier
 
     private lateinit var imageViews: List<ImageView>
-    private var job: Job? = null
+
     private lateinit var filteredModelOutput: List<Category>
-    var speechDecibel: Float = 0f
-    val speechDecibels: MutableList<Float> = mutableListOf()
+    private var speechDecibel: Float = 0f
+    private val speechDecibels: MutableList<Float> = mutableListOf()
+    private var speechDecibelIndex: Int = 0
+    private var surroundingSounds = listOf<Category>()
+    private var surroundingDecibel: Float = 0f
+    private var surroundingDecibelIndex: Int = 0
+    private var subtitleChunk: String = ""
+    private var userDeviceId = ""
 
-    private val decibelValues = listOf(10, 55, 30, 45, 23) // 임의의 데시벨 값
-
-    val subtitles = mutableListOf<String>()
-    lateinit var subtitleAdapter: ArrayAdapter<String>
+    private val subtitles = mutableListOf<String>()
+    //private lateinit var subtitleAdapter: ArrayAdapter<String>
     private lateinit var subtitleApiService: SubtitleService
 
     private var speechAPI: SpeechAPI? = null
@@ -113,8 +112,7 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                         binding.liveTranscribeTextView.visibility = View.INVISIBLE
 
                         subtitles.add(text)
-                        subtitleAdapter.notifyDataSetChanged()
-//                        binding.mySubtitleListView.smoothScrollToPosition(0)
+                        //subtitleAdapter.notifyDataSetChanged()
                     } else {
                         binding.liveTranscribeTextView.text = text
                         binding.liveTranscribeTextView.visibility = View.VISIBLE
@@ -154,17 +152,11 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
         // Initialization
         // load the model from the assets folder
-        classifier = AudioClassifier.createFromFile(this, modelPath);
+        classifier = AudioClassifier.createFromFile(this, modelPath)
 
         // create an audio recorder
         // `tensor`: store the recording for inference & build the format specification for the recorder.
-        tensor = classifier.createInputTensorAudio();
-
-        // show the audio recorder specification
-        val format = classifier.requiredTensorAudioFormat
-//        val recorderSpecs = "Number Of Channels: ${format.channels}\n" +
-//                "Sample Rate: ${format.sampleRate}"
-        //recorderSpecsTextView.text = recorderSpecs
+        tensor = classifier.createInputTensorAudio()
 
         speechAPI = SpeechAPI(this)
         speechAPI!!.addListener(listener)
@@ -182,10 +174,9 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
             binding.image10
         )
 
-//        subtitles.add("AllEars")
-//        subtitles.add("subtitle이 보일 곳")
-//        subtitles.add("파이팅!")
-        subtitleAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, subtitles)
+        userDeviceId = getMyDeviceId()
+
+        //subtitleAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, subtitles)
 //        binding.mySubtitleListView.adapter = subtitleAdapter
 //        binding.mySubtitleListView.isVerticalScrollBarEnabled = false
 
@@ -220,24 +211,28 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
                     )
 
                     // subtitles 리스트 -> joinToString
-                    val subtitleChunk = subtitles.joinToString(". ")
-                    Log.e(TAG_STT, subtitleChunk)
+                    subtitleChunk = subtitles.joinToString(". ")
+                    Log.d(TAG_STT, subtitleChunk)
                     // 서버에다 POST로 해당 스트링 보내기
-                    subtitleApiService.createSubtitle(getMyDeviceId(), subtitleChunk).enqueue(object : Callback<SubtitleCreateRequestDto> {
-                        override fun onResponse(call: Call<SubtitleCreateRequestDto>, response: Response<SubtitleCreateRequestDto>) {
-                            if (response.isSuccessful) {
-                                Log.e(TAG_STT, "Retrofit 성공")
+                        // 말을 했을 때만 서버에다 POST. 즉, 빈 문자열은 POST 하지 않음.
+                    if (subtitleChunk.isNotEmpty()) {
+                        Log.i(TAG_STT, "subtitleChunk is NOT empty")
+                        subtitleApiService.createSubtitle(userDeviceId, subtitleChunk).enqueue(object : Callback<SubtitleCreateRequestDto> {
+                            override fun onResponse(call: Call<SubtitleCreateRequestDto>, response: Response<SubtitleCreateRequestDto>) {
+                                if (response.isSuccessful) {
+                                    Log.i(TAG_STT, "Retrofit createSubtitle()_onResponse()_성공")
+                                }
                             }
-                        }
 
-                        override fun onFailure(call: Call<SubtitleCreateRequestDto>, t: Throwable) {
-                            Log.e(TAG_STT, "Retrofit 성공")
-                        }
-                    })
-                    // subtitles 리스트 비우기
-                    subtitles.removeAll(subtitles)
-                    subtitleAdapter.notifyDataSetChanged()
-//                    binding.mySubtitleListView.smoothScrollToPosition(0)
+                            override fun onFailure(call: Call<SubtitleCreateRequestDto>, t: Throwable) {
+                                Log.e(TAG_STT, "Retrofit createSubtitle()_onFailure(): $t")
+                            }
+                        })
+
+                        // subtitles 리스트 비우기
+                        subtitles.removeAll(subtitles)
+                        //subtitleAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
@@ -284,89 +279,62 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
 
             // Creating a multiline string with the filtered results
             val allDecibelsStr =
-                filteredModelOutput.sortedBy { -it.score }
+                filteredModelOutput.sortedBy { -it.score }  // sortedBy(): 오름차순
                     .joinToString(separator = "\n") { "${it.label} -> ${it.score} " }
+            Log.d(TAG_STT, allDecibelsStr)
 
             speechDecibel = filteredModelOutput.find { it.label == "Speech" }?.score ?: 0f
-            val speechDecibelIndex = (speechDecibel * 10).toInt() - 1
-            speechDecibels.add(speechDecibel)
+            Log.v(TAG_STT, "speechDecibel: $speechDecibel")
+
+            surroundingSounds = filteredModelOutput.filter { it.label != "Speech" && it.label != "Silence" }
+            if (surroundingSounds.isNotEmpty()) {
+                surroundingDecibel = surroundingSounds.maxOf { it.score } + 0.05f    // 보강
+            } else {
+                surroundingDecibel = 0f
+            }
+            Log.v(TAG_STT, "nonSpeechDecibel: $surroundingDecibel")
+
+            if (speechDecibel == 1.0f)
+                speechDecibelIndex = 9
+            else
+                speechDecibelIndex = (speechDecibel * 10).toInt()
+            Log.v(TAG_STT, "speechDecibelIndex: $speechDecibelIndex")
+
+            if (surroundingDecibel >= 1.0f) {
+                surroundingDecibelIndex = 9
+            } else {
+                surroundingDecibelIndex = (surroundingDecibel * 10).toInt()
+            }
+            Log.v(TAG_STT, "surroundingDecibelIndex: $surroundingDecibelIndex")
+            //speechDecibels.add(speechDecibel)
 
             // Updating the UI
-            if (allDecibelsStr.isNotEmpty() && speechDecibel > 0f) {
+            if (allDecibelsStr.isNotEmpty()) {
                 runOnUiThread {
-                    // 인식되는 모든 데시벨 출력
-                    //binding.temporalTextView.text = allDecibelsStr
-
-                    // Speech의 데시벨 수치만 출력
-                    //binding.temporalTextView.text = speechDecibelStr
-
                     // Speech의 데시벨 뷰
                     reinitializeUI()
-                    //Log.e(TAG_STT, "$durationIndex")
-                    startSurroundingDecibelProcess(durationIndex)
+                    startSurroundingDecibelProcess(surroundingDecibelIndex)
                     imageViews[speechDecibelIndex].setImageResource(R.drawable.decibel_myspeech)
-
-                    //durationIndex++
-
-                    //startDecibelProcessing()
                 }
-                //durationIndex++
             }
-            durationIndex++
-
         }
-
         state = RECORDING
     }
 
-//    private fun startDecibelProcessing() {
-//        job = CoroutineScope(Dispatchers.Main).launch {
-//
-//            while (state == RECORDING) {
-//                for (decibel in decibelValues) {
-//                    val middleDecibelIndex = decibel / 10
-//                    when (decibel) {
-//                        in 0 until 10 -> {
-//                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-//                            imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
-//                        }
-//                        in 10 until 90 -> {
-//                            imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
-//                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-//                            imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
-//                        }
-//                        in 90 until 100 -> {
-//                            imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-//                            imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
-//                        }
-//                    }
-//                    delay(1000) // 1초 대기
-//                    reinitializeUI()
-//                }
-//            }
-//
-//            // 모든 데시벨 값 처리 후 코루틴을 중지하고 이미지 초기화
-//            //reinitializeUI()
-//        }
-//    }
-
-    private fun startSurroundingDecibelProcess(currentDuration: Int) {
-        val realIndex = currentDuration % decibelValues.size    // 0, 1, 2, 3, 4 반복
-        Log.e(TAG_STT, "${realIndex}")
-        val middleDecibelIndex = decibelValues[realIndex] / 10
-        when (decibelValues[realIndex]) {
-            in 0 until 10 -> {
-                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-                imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+    private fun startSurroundingDecibelProcess(surroundingDecibelIndex: Int) {
+        when (surroundingDecibelIndex) {
+            0 -> {
+                imageViews[surroundingDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[surroundingDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
             }
-            in 10 until 90 -> {
-                imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
-                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-                imageViews[middleDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
+            in 1 until 9 -> {
+                imageViews[surroundingDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+                imageViews[surroundingDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[surroundingDecibelIndex + 1].setImageResource(R.drawable.current_decibel)
             }
-            in 90 until 100 -> {
-                imageViews[middleDecibelIndex].setImageResource(R.drawable.current_decibel)
-                imageViews[middleDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
+            9 -> {
+                imageViews[surroundingDecibelIndex].setImageResource(R.drawable.current_decibel)
+                imageViews[surroundingDecibelIndex - 1].setImageResource(R.drawable.current_decibel)
             }
         }
     }
@@ -374,27 +342,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     private fun reinitializeUI() {
         imageViews.map { it.setImageResource(R.drawable.decibel_unit) }
     }
-
-//    private fun startDecibelProcessing() {
-//        job = CoroutineScope(Dispatchers.Main).launch {
-//            val lastSpeechDecibel = speechDecibels.last()
-//            updateImagesWithDecibel(lastSpeechDecibel)
-//            delay(1000) // 1초 대기
-//            // 모든 데시벨 값 처리 후 코루틴을 중지하고 이미지 초기화
-//            //resetAllImages()
-//        }
-//    }
-
-//    private fun updateImagesWithDecibel(decibel: Float) {
-//        imageViews.map { imageView ->
-//            imageView.setImageResource(R.drawable.decibel_unit)
-//        }
-//
-//        val indexToUpdate = (decibel * 10).toInt() - 1
-//        if (indexToUpdate in imageViews.indices) {
-//            imageViews[indexToUpdate].setImageResource(R.drawable.current_decibel)
-//        }
-//    }
 
     private fun stopVoiceRecorder() {
         voiceRecorder?.stop()
@@ -412,58 +359,10 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         speechAPI?.destroy()
         speechAPI = null
 
-        Log.e(TAG_STT, "destroy the speechAPI")
+        Log.d(TAG_STT, "destroy the speechAPI")
 
         super.onDestroy()
     }
-
-//    private fun stopRecording() {
-//        recorder?.apply {
-//            stop()
-//            release()
-//        }
-//        recorder = null
-//
-//        timer.stop()
-//
-//        // todo recorder 중복
-//        voiceRecorder?.stop()
-//        voiceRecorder = null
-//
-//        state = RELEASE
-//    }
-
-
-
-//    private fun startRecording() {
-//        recorder = MediaRecorder().apply {
-//            setAudioSource(MediaRecorder.AudioSource.MIC)
-//            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-//            setOutputFile(fileName)
-//            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-//
-//            try {
-//                prepare()
-//            } catch (e: IOException) {
-//                Log.e(TAG_DECIBEL, "prepare() failed: $e")
-//            }
-//
-//            start()
-//
-////            displaySpeechRecognizer()
-//        }
-//
-//        // TODO decibelView 를 decibelContainer 로 변경함에 따른 주석 처리
-//        //binding.decibelView.clearDecibel()
-//
-//        timer.start()
-//
-//        // todo recorder 중복
-//        voiceRecorder = VoiceRecorder(callback)
-//        voiceRecorder?.start()
-//
-//        state = RECORDING
-//    }
 
     private fun showRequestPermissionRationale() {
         AlertDialog.Builder(this)
@@ -505,43 +404,3 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         //binding.decibelView.addAmplitude(recorder?.maxAmplitude?.toFloat() ?: 0f)
     }
 }
-
-/* New Project 생성시 기본 템플릿에 있었던 코드
-// Wear OS 특성상 필요한 코드인지 아직 안 알아본 상태라 남겨 둠.
-
-@Composable
-fun WearApp(greetingName: String) {
-    AllEarsTheme {
-        /* If you have enough items in your list, use [ScalingLazyColumn] which is an optimized
-         * version of LazyColumn for wear devices with some added features. For more information,
-         * see d.android.com/wear/compose.
-         */
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Greeting(greetingName = greetingName)
-        }
-    }
-}
-
-@Composable
-fun Greeting(greetingName: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
-    )
-}
-
-
-
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
-}
- */
