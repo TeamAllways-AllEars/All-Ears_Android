@@ -62,13 +62,7 @@ public class VoiceRecorder {
     public AudioRecord tensorAudioRecord;
     public AudioRecord sttAudioRecord;
 
-    // DECIBEL: define the minimum threshold
-//    private float probabilityThreshold = 0.3f;
-//    public String outputStr;
-
-    TensorAudio tensor;
     AudioClassifier mClassifier;
-    //AudioRecord tensorAudioRecord;
 
     private Thread mThread;
 
@@ -102,9 +96,8 @@ public class VoiceRecorder {
         if (sttAudioRecord == null) {
             throw new RuntimeException("Cannot instantiate sttAudioRecorder");
         }
-        if (tensorAudioRecord == null) {
-            throw new RuntimeException("Cannot instantiate tensorAudioRecorder");
-        }
+        // tensorAudioRecord is always NOT null
+
         // Start recording.
         sttAudioRecord.startRecording();
         tensorAudioRecord.startRecording();
@@ -123,11 +116,11 @@ public class VoiceRecorder {
                 mThread.interrupt();
                 mThread = null;
             }
-//            if (tensorAudioRecord != null) {
-//                tensorAudioRecord.stop();
-//                tensorAudioRecord.release();
-//                tensorAudioRecord = null;
-//            }
+            if (tensorAudioRecord != null) {
+                tensorAudioRecord.stop();
+                tensorAudioRecord.release();
+                tensorAudioRecord = null;
+            }
             if (sttAudioRecord != null) {
                 sttAudioRecord.stop();
                 sttAudioRecord.release();

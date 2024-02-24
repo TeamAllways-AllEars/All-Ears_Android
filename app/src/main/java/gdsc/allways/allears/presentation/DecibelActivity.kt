@@ -60,19 +60,18 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
     private var state: State = RELEASE
 
     // Defining the model to be used
-    var modelPath = "1.tflite"
+    private var modelPath = "1.tflite"
 
     // Defining the minimum threshold
-    var probabilityThreshold: Float = 0.05f // original: 0.3f
+    private var probabilityThreshold: Float = 0.05f // original: 0.3f
 
-    lateinit var tensor:TensorAudio
-    lateinit var classifier: AudioClassifier
+    private lateinit var tensor:TensorAudio
+    private lateinit var classifier: AudioClassifier
 
     private lateinit var imageViews: List<ImageView>
 
     private lateinit var filteredModelOutput: List<Category>
     private var speechDecibel: Float = 0f
-    private val speechDecibels: MutableList<Float> = mutableListOf()
     private var speechDecibelIndex: Int = 0
     private var surroundingSounds = listOf<Category>()
     private var surroundingDecibel: Float = 0f
@@ -261,8 +260,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         // 코루틴 시작
         //startDecibelProcessing()
 
-        var durationIndex = 0
-
         timer = Timer()
         timer.scheduleAtFixedRate(1, 500) {
 
@@ -287,23 +284,23 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
             Log.v(TAG_STT, "speechDecibel: $speechDecibel")
 
             surroundingSounds = filteredModelOutput.filter { it.label != "Speech" && it.label != "Silence" }
-            if (surroundingSounds.isNotEmpty()) {
-                surroundingDecibel = surroundingSounds.maxOf { it.score } + 0.05f    // 보강
+            surroundingDecibel = if (surroundingSounds.isNotEmpty()) {
+                surroundingSounds.maxOf { it.score } + 0.05f    // 보강
             } else {
-                surroundingDecibel = 0f
+                0f
             }
             Log.v(TAG_STT, "nonSpeechDecibel: $surroundingDecibel")
 
-            if (speechDecibel == 1.0f)
-                speechDecibelIndex = 9
+            speechDecibelIndex = if (speechDecibel == 1.0f)
+                9
             else
-                speechDecibelIndex = (speechDecibel * 10).toInt()
+                (speechDecibel * 10).toInt()
             Log.v(TAG_STT, "speechDecibelIndex: $speechDecibelIndex")
 
-            if (surroundingDecibel >= 1.0f) {
-                surroundingDecibelIndex = 9
+            surroundingDecibelIndex = if (surroundingDecibel >= 1.0f) {
+                9
             } else {
-                surroundingDecibelIndex = (surroundingDecibel * 10).toInt()
+                (surroundingDecibel * 10).toInt()
             }
             Log.v(TAG_STT, "surroundingDecibelIndex: $surroundingDecibelIndex")
             //speechDecibels.add(speechDecibel)
@@ -348,8 +345,6 @@ class DecibelActivity : ComponentActivity(), OnTimerTickListener {
         voiceRecorder = null
 
         timer.cancel()
-
-        speechDecibels.clear()
 
         state = RELEASE
     }

@@ -57,10 +57,6 @@ class SubtitlesActivity : AppCompatActivity() {
         val currentDate = dateFormat.format(currentDateTime.time).uppercase(Locale.getDefault()) // 대문자로 변환
         val currentTime = timeFormat.format(currentDateTime.time)
 
-        // 자막 추가
-        val subtitleToAdd = SubtitleResponseDto(3, currentDate, currentTime, testText)
-        //addSubtitle(subtitleToAdd)
-        Log.d("ALLEars", currentDate + "\n" + currentTime + "\n" + testText)
         fetchSubtitles()
     }
 
