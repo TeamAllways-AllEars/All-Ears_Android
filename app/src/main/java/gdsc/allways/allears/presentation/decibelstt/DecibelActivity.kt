@@ -4,7 +4,7 @@
  * changes to the libraries and their usages.
  */
 
-package gdsc.allways.allears.presentation
+package gdsc.allways.allears.presentation.decibelstt
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -26,8 +26,8 @@ import androidx.core.content.ContextCompat
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityDecibelBinding
 import gdsc.allways.allears.dto.SubtitleCreateRequestDto
-import gdsc.allways.allears.presentation.DecibelActivity.State.RECORDING
-import gdsc.allways.allears.presentation.DecibelActivity.State.RELEASE
+import gdsc.allways.allears.presentation.decibelstt.DecibelActivity.State.RECORDING
+import gdsc.allways.allears.presentation.decibelstt.DecibelActivity.State.RELEASE
 import gdsc.allways.allears.presentation.speechtotext.SpeechAPI
 import gdsc.allways.allears.presentation.speechtotext.VoiceRecorder
 import gdsc.allways.allears.presentation.subtitles.SubtitleService

@@ -10,7 +10,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivitySettingBinding
-import gdsc.allways.allears.presentation.decibel.VoiceRecognitionActivity
+import gdsc.allways.allears.presentation.voicerecognition.VoiceRecognitionActivity
 
 class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding

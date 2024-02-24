@@ -1,4 +1,4 @@
-package gdsc.allways.allears.presentation.decibel
+package gdsc.allways.allears.presentation.voicerecognition
 
 import android.os.Bundle
 import android.os.Handler

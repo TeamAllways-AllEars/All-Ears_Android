@@ -1,4 +1,4 @@
-package gdsc.allways.allears.presentation
+package gdsc.allways.allears.presentation.decibelstt
 
 import android.content.Context
 import android.graphics.Canvas

@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import gdsc.allways.allears.R
 import gdsc.allways.allears.databinding.ActivityMainBinding
-import gdsc.allways.allears.presentation.DecibelActivity
+import gdsc.allways.allears.presentation.decibelstt.DecibelActivity
 import gdsc.allways.allears.presentation.setting.SettingActivity
 import gdsc.allways.allears.presentation.subtitles.SubtitlesActivity
 

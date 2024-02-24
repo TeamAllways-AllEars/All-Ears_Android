@@ -59,7 +59,7 @@
             android:value="true" />
 
         <activity
-            android:name=".presentation.DecibelActivity"
+            android:name=".presentation.decibelstt.DecibelActivity"
             android:exported="true"
             android:theme="@android:style/Theme.DeviceDefault">
         </activity>
@@ -90,21 +90,21 @@
         </activity>
 
         <activity
-            android:name=".presentation.decibel.VoiceRecognitionActivity"
+            android:name=".presentation.voicerecognition.VoiceRecognitionActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat">
         </activity>
 
         <activity
-            android:name=".presentation.decibel.VoiceRecognitionSuccessActivity"
+            android:name=".presentation.voicerecognition.VoiceRecognitionSuccessActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat">
         </activity>
 
         <activity
-            android:name=".presentation.decibel.VoiceRecognitionFailActivity"
+            android:name=".presentation.voicerecognition.VoiceRecognitionFailActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat">
