@@ -14,13 +14,13 @@
         android:layout_marginTop="32dp"
         android:layout_marginBottom="5dp"
         android:src="@drawable/complete_fail_button"
-        app:layout_constraintBottom_toTopOf="@+id/recordingCompleteTextView"
+        app:layout_constraintBottom_toTopOf="@+id/recordingCompleteFailTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/recordingCompleteTextView"
+        android:id="@+id/recordingCompleteFailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
