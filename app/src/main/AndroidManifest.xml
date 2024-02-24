@@ -3,9 +3,6 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
-    <!-- 0223 01:31 에러 해결 위해 추가한 퍼미션-->
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />

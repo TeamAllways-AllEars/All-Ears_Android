@@ -100,9 +100,9 @@ class MainActivity : AppCompatActivity() {
         binding.button1.setImageResource(R.drawable.decibel)
         binding.button2.setImageResource(R.drawable.subtitles)
         binding.button3.setImageResource(R.drawable.setting)
-        binding.decibelText.visibility = android.view.View.GONE
-        binding.subtitlesText.visibility = android.view.View.GONE
-        binding.settingText.visibility = android.view.View.GONE
+        binding.decibelText.visibility = View.GONE
+        binding.subtitlesText.visibility = View.GONE
+        binding.settingText.visibility = View.GONE
         // 로고 이미지 숨기기
         binding.logo.visibility = android.view.View.GONE
 

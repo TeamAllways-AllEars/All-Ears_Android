@@ -4,10 +4,7 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
-
-import org.tensorflow.lite.support.audio.TensorAudio;
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier;
 
 /**
