@@ -36,3 +36,9 @@ Client of "All Ears" uses the **GCP STT API** for **Live Captioning**. To run th
   "universe_domain": "..."
 }
 ```
+
+You also need to provide the base url for your SpringBoot backend server in `app/src/main/java/gdsc/allways/allears/presentation/subtitles/SubtitleService.kt` file. Make GCP VM for backend server, attach **static external IP** to the VN instance, and provide the info of static external IP to the `BASE_URL` val in `SubtitleService.kt` file.
+
+``` kotlin
+private const val BASE_URL = "http://<static external IP>:8080"
+```
