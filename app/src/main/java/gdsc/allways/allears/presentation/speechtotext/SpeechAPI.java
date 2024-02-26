@@ -226,7 +226,7 @@ public class SpeechAPI {
             //  Indeed, I should never do this in my app. Instead, store
             //  the file in my server and obtain an access token from there.
             //  *******************
-            final InputStream stream = mContext.getResources().openRawResource(R.raw.credential3);  // credential json file
+            final InputStream stream = mContext.getResources().openRawResource(R.raw.credential_allwaysallears);  // credential json file
             try {
                 final GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                         .createScoped(SCOPE);
