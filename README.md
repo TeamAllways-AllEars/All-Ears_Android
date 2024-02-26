@@ -1,22 +1,21 @@
-## ⬇️ Install
+## ✅ How to run
+### 1) Prerequisites
 Client of "All Ears" is a `WearOS` application and requires the following dependencies. Make sure to have the correct dependencies for the project.
 - java version: 8
 - kotlin version: 1.7.20
 - gradle version: 8.2
 - android: Hedgehog | 2023.1.1 Patch 1
 - complie SDK version: API 34
+- Android Studio
 
-## ⌚ Device
-"All Ears" was tested on the `Galaxy Watch 4`, which has an `ARM Mali-G68 MP2 667 MHz GPU`. If you are planning to run this code on a device, make sure your edgy device has the same or higher GPU specs.
-- Galaxy watch 4 (44mm)
-- ARM Mali-G68 MP2 667 MHz GPU
+### 2) Clone
+Clone this repository to your local computer using:
+```bash
+https://github.com/TeamAllways-AllEars/All-Ears_Android.git
+```
 
-## ⚙️ Architecture
-<div>
-  <img alt="Wear OS" src ="https://img.shields.io/badge/wearos-4285F4.svg?&style=for-the-badge&logo=wearos&logoColor=white"/>
-  <img alt="Tensorflow Lite" src ="https://img.shields.io/badge/tensorflow lite-FF6F00.svg?&style=for-the-badge&logo=tensorflow&logoColor=white"/>
-  <img alt="GCP STT" src ="https://img.shields.io/badge/GCP STT-4285F4.svg?style=for-the-badge&logo=googlecloud&logoColor=white"/>
-</div>
+### 3) GCP resource
+Client of "All Ears" uses the **GCP STT API** for **Live Captioning**. Please create a Service account for STT in GCP and apply the JSON key file in your project.
 
 <img width="1920" alt="allears-architecture-android" src="https://github.com/TeamAllways-AllEars/All-Ears_Android/assets/89632139/e6ed4554-d6e1-43c0-bb92-42e4875ca379">
 
@@ -36,3 +35,23 @@ Client of "All Ears" uses the **GCP STT API** for **Live Captioning**. To run th
   "universe_domain": "..."
 }
 ```
+
+You also need to provide the base url for your SpringBoot backend server in `app/src/main/java/gdsc/allways/allears/presentation/subtitles/SubtitleService.kt` file. Make GCP VM for backend server, attach **static external IP** to the VM instance(refer to [All-Ears_Server](https://github.com/TeamAllways-AllEars/All-Ears_Server) repository), and provide the info of static external IP to the `BASE_URL` val in `SubtitleService.kt` file.
+
+``` kotlin
+private const val BASE_URL = "http://<static external IP>:8080"
+```
+
+## ⌚ Device
+"All Ears" was tested on the `Galaxy Watch 4`, which has an `ARM Mali-G68 MP2 667 MHz GPU`. If you are planning to run this code on a device, make sure your edgy device has the same or higher GPU specs.
+- Galaxy watch 4 (44mm)
+- ARM Mali-G68 MP2 667 MHz GPU
+
+## ⚙️ Architecture
+<div>
+  <img alt="Wear OS" src ="https://img.shields.io/badge/wearos-4285F4.svg?&style=for-the-badge&logo=wearos&logoColor=white"/>
+  <img alt="Tensorflow Lite" src ="https://img.shields.io/badge/tensorflow lite-FF6F00.svg?&style=for-the-badge&logo=tensorflow&logoColor=white"/>
+  <img alt="GCP STT" src ="https://img.shields.io/badge/GCP STT-4285F4.svg?style=for-the-badge&logo=googlecloud&logoColor=white"/>
+</div>
+
+<img width="1920" alt="allears-architecture-android" src="https://github.com/TeamAllways-AllEars/All-Ears_Android/assets/89632139/e6ed4554-d6e1-43c0-bb92-42e4875ca379">
